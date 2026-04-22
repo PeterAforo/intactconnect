@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, ShoppingCart, Users, FileText, Wallet,
-  Store, Settings, LogOut, Menu, X, ChevronRight,
+  Store, Settings, LogOut, Menu, X, ChevronRight, Tag, Megaphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/clients", label: "Clients", icon: Users },
   { href: "/dashboard/invoices", label: "Invoices", icon: FileText },
   { href: "/dashboard/payouts", label: "Payouts", icon: Wallet },
+  { href: "/dashboard/promotions", label: "Promotions", icon: Megaphone },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
@@ -62,7 +64,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <button onClick={() => setSidebarOpen(true)}>
           <Menu className="w-5 h-5 text-text" />
         </button>
-        <span className="font-bold gradient-text">IntactConnect</span>
+        <Image src="/img/logo.png" alt="IntactConnect" width={160} height={45} className="h-10 w-auto" />
         <div className="w-5" />
       </header>
 
@@ -74,7 +76,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-border transform transition-transform lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="h-14 flex items-center justify-between px-4 border-b border-border">
-          <Link href="/dashboard" className="font-bold gradient-text text-lg">IntactConnect</Link>
+          <Link href="/dashboard"><Image src="/img/logo.png" alt="IntactConnect" width={180} height={50} className="h-12 w-auto" /></Link>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
             <X className="w-5 h-5 text-text-muted" />
           </button>

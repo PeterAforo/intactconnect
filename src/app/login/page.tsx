@@ -9,7 +9,7 @@ import { Eye, EyeOff, Loader2, ArrowLeft, TrendingUp, ShieldCheck, Smartphone } 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const LOGIN_IMG = "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80";
+const LOGIN_IMG = "/img/african-american-business-woman-with-laptop.jpg";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,10 +42,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex">
       {/* Left — Image Panel (hidden on mobile) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-primary">
-        <Image src={LOGIN_IMG} alt="Young professional" fill className="object-cover opacity-40" />
+        <Image src={LOGIN_IMG} alt="Young professional" fill sizes="50vw" className="object-cover opacity-40" />
         <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-primary/30" />
         <div className="relative z-10 flex flex-col justify-between p-10 text-white">
-          <Link href="/" className="text-2xl font-bold">IntactConnect</Link>
+          <Link href="/"><Image src="/img/logo.png" alt="IntactConnect" width={200} height={56} className="h-14 w-auto brightness-0 invert" /></Link>
 
           <div className="max-w-md">
             <h2 className="text-3xl font-bold mb-4 leading-tight">Welcome Back, Boss.</h2>
@@ -82,7 +82,7 @@ export default function LoginPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8">
               <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold gradient-text mb-1">IntactConnect</h1>
+                <Image src="/img/logo.png" alt="IntactConnect" width={200} height={56} className="h-14 w-auto mx-auto mb-1" />
                 <p className="text-text-muted text-sm">Sign in to your reseller dashboard</p>
               </div>
 
@@ -108,7 +108,11 @@ export default function LoginPage() {
                 </Button>
               </form>
 
-              <p className="text-center text-text-muted text-sm mt-6">
+              <div className="text-center mt-4">
+                <Link href="/forgot-password" className="text-primary hover:underline text-sm">Forgot your password?</Link>
+              </div>
+
+              <p className="text-center text-text-muted text-sm mt-4">
                 Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline font-medium">Register</Link>
               </p>
             </div>

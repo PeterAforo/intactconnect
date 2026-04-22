@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     select: {
       id: true, storeName: true, storeSlug: true, status: true, picture: true,
       commissionBalance: true, bio: true, phone: true, email: true,
+      storeLogo: true, storeBanner: true, storeTagline: true, storeThemeColor: true,
       momoProvider: true, momoNumber: true, bankName: true, bankAccountNumber: true, bankAccountName: true,
     },
   });

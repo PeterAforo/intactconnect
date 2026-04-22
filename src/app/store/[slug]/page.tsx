@@ -3,14 +3,19 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Search, ShoppingCart, Filter, ChevronDown, Star, Phone, Mail, Store as StoreIcon, Package } from "lucide-react";
+import { Search, ShoppingCart, Star, Phone, Mail, Store as StoreIcon, Package, Tag, Percent } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
+interface CategoryItem { id: string; name: string; slug: string; image: string | null; _count: { products: number }; }
+interface Promotion { id: string; title: string; description: string | null; image: string | null; discount: number | null; code: string | null; }
 interface StoreData {
   id: string; storeName: string; storeSlug: string; bio: string | null; picture: string; phone: string; email: string;
+  storeLogo: string | null; storeBanner: string | null; storeTagline: string | null; storeThemeColor: string | null;
+  categories: CategoryItem[]; promotions: Promotion[];
 }
 
 interface ProductItem {
@@ -44,10 +49,12 @@ export default function StorePage() {
   const [cart, setCart] = useState<{ id: string; name: string; price: number; image: string | null; qty: number }[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const fetchProducts = useCallback(async () => {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
+    if (activeCategory) params.set("category", activeCategory);
     params.set("sort", sort);
     params.set("page", page.toString());
 
@@ -57,7 +64,7 @@ export default function StorePage() {
     setProducts(data.products);
     setTotal(data.total);
     setTotalPages(data.totalPages);
-  }, [slug, search, sort, page]);
+  }, [slug, search, sort, page, activeCategory]);
 
   useEffect(() => {
     fetch(`/api/store/${slug}`).then((r) => {
@@ -115,7 +122,7 @@ export default function StorePage() {
       <header className="bg-white border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={store!.picture} alt={store!.storeName} className="w-10 h-10 rounded-full object-cover border border-border" />
+            <img src={store!.storeLogo || store!.picture} alt={store!.storeName} className="w-10 h-10 rounded-full object-cover border border-border" />
             <div>
               <h1 className="font-bold text-text text-lg leading-tight">{store!.storeName}</h1>
               <div className="flex items-center gap-3 text-xs text-text-muted">
@@ -133,10 +140,52 @@ export default function StorePage() {
         </div>
       </header>
 
-      {/* Store Bio */}
-      {store!.bio && (
+      {/* Store Bio / Tagline */}
+      {(store!.storeTagline || store!.bio) && (
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <p className="text-text-muted text-sm">{store!.bio}</p>
+          {store!.storeTagline && <p className="font-medium text-text text-sm">{store!.storeTagline}</p>}
+          {store!.bio && <p className="text-text-muted text-sm mt-1">{store!.bio}</p>}
+        </div>
+      )}
+
+      {/* Promotions */}
+      {store!.promotions && store!.promotions.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 pb-2">
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {store!.promotions.map((promo) => (
+              <div key={promo.id} className="shrink-0 w-72 bg-gradient-to-r from-primary to-primary/80 rounded-xl p-4 text-white">
+                <div className="flex items-start gap-2">
+                  <Percent className="w-5 h-5 shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-bold text-sm">{promo.title}</h3>
+                    {promo.description && <p className="text-white/80 text-xs mt-0.5">{promo.description}</p>}
+                    <div className="flex items-center gap-2 mt-2">
+                      {promo.discount && <Badge className="bg-white/20 text-white text-xs">{promo.discount}% OFF</Badge>}
+                      {promo.code && <Badge className="bg-white/20 text-white text-xs font-mono">Code: {promo.code}</Badge>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Categories */}
+      {store!.categories && store!.categories.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            <button onClick={() => { setActiveCategory(null); setPage(1); }}
+              className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-colors ${!activeCategory ? "bg-primary text-white border-primary" : "bg-white border-border text-text-muted hover:border-primary/30"}`}>
+              <Tag className="w-3 h-3 inline mr-1" />All
+            </button>
+            {store!.categories.map((cat) => (
+              <button key={cat.id} onClick={() => { setActiveCategory(cat.id); setPage(1); }}
+                className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-colors ${activeCategory === cat.id ? "bg-primary text-white border-primary" : "bg-white border-border text-text-muted hover:border-primary/30"}`}>
+                {cat.name} ({cat._count.products})
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -180,31 +229,35 @@ export default function StorePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="bg-white rounded-xl border border-border overflow-hidden group"
+                className="bg-white rounded-xl border border-border overflow-hidden group hover:border-primary/30 transition-colors"
               >
-                <div className="aspect-square relative bg-surface">
-                  {product.image ? (
-                    <Image src={product.image} alt={product.name} fill className="object-contain p-2 group-hover:scale-105 transition-transform" sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 20vw" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Package className="w-8 h-8 text-text-muted" />
-                    </div>
-                  )}
-                  {product.comparePrice && product.comparePrice > product.resellerPrice && (
-                    <Badge className="absolute top-2 left-2 bg-danger text-white text-xs">
-                      -{Math.round((1 - product.resellerPrice / product.comparePrice) * 100)}%
-                    </Badge>
-                  )}
-                </div>
-                <div className="p-3">
-                  <p className="text-xs text-text-muted mb-1">{product.category.name}</p>
-                  <h3 className="text-sm font-medium text-text line-clamp-2 mb-2 leading-tight">{product.name}</h3>
-                  {product.rating > 0 && (
-                    <div className="flex items-center gap-1 mb-2">
-                      <Star className="w-3 h-3 fill-warning text-warning" />
-                      <span className="text-xs text-text-muted">{product.rating.toFixed(1)} ({product.reviewCount})</span>
-                    </div>
-                  )}
+                <Link href={`/store/${slug}/product/${product.slug}`} className="block">
+                  <div className="aspect-square relative bg-surface">
+                    {product.image ? (
+                      <Image src={product.image} alt={product.name} fill className="object-contain p-2 group-hover:scale-105 transition-transform" sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 20vw" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Package className="w-8 h-8 text-text-muted" />
+                      </div>
+                    )}
+                    {product.comparePrice && product.comparePrice > product.resellerPrice && (
+                      <Badge className="absolute top-2 left-2 bg-danger text-white text-xs">
+                        -{Math.round((1 - product.resellerPrice / product.comparePrice) * 100)}%
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="p-3 pb-1">
+                    <p className="text-xs text-text-muted mb-1">{product.category.name}</p>
+                    <h3 className="text-sm font-medium text-text line-clamp-2 mb-2 leading-tight group-hover:text-primary">{product.name}</h3>
+                    {product.rating > 0 && (
+                      <div className="flex items-center gap-1 mb-2">
+                        <Star className="w-3 h-3 fill-warning text-warning" />
+                        <span className="text-xs text-text-muted">{product.rating.toFixed(1)} ({product.reviewCount})</span>
+                      </div>
+                    )}
+                  </div>
+                </Link>
+                <div className="px-3 pb-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-bold text-text text-sm">{formatPrice(product.resellerPrice)}</p>
@@ -212,7 +265,7 @@ export default function StorePage() {
                         <p className="text-xs text-text-muted line-through">{formatPrice(product.comparePrice)}</p>
                       )}
                     </div>
-                    <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => addToCart(product)}>
+                    <Button size="sm" variant="outline" className="h-8 text-xs" onClick={(e) => { e.preventDefault(); addToCart(product); }}>
                       Add
                     </Button>
                   </div>

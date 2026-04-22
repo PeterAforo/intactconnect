@@ -10,14 +10,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const HERO_IMG = "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80";
+const HERO_IMG = "/img/people-identifical-clothes-african-couple-autumn-city.jpg";
 const HOW_IMGS = [
-  "https://images.unsplash.com/photo-1616587226960-4a03badbe8bf?w=500&q=80",
-  "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=500&q=80",
-  "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&q=80",
+  "/img/african-american-business-woman-with-laptop.jpg",
+  "/img/girls-walk-along-streets-city.jpg",
+  "/img/software-engineer-coding-laptop-focusing-deep-learning.jpg",
 ];
-const CTA_IMG = "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80";
-const SOCIAL_IMG = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80";
+const CTA_IMG = "/img/african-american-woman-with-laptop-cafe.jpg";
+const SOCIAL_IMG = "/img/portrait-african-american-man-sitting-cafe-working-laptop.jpg";
 
 const features = [
   { icon: Users, title: "Your Own Store", desc: "Get a personalized storefront link to share with your network on WhatsApp, IG & more" },
@@ -29,9 +29,9 @@ const features = [
 ];
 
 const testimonials = [
-  { name: "Ama Serwaa", location: "Accra", quote: "I started selling Intact products to my university friends. Now I make extra income every month without leaving campus!", avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100&q=80" },
-  { name: "Kwame Asante", location: "Kumasi", quote: "IntactConnect made it so easy. I just share my store link on WhatsApp and the orders come in. The commissions are real!", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" },
-  { name: "Efya Mensah", location: "Takoradi", quote: "I love that I don't have to stock any products. Intact handles everything — I just focus on selling and earning.", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" },
+  { name: "Ama Serwaa", location: "Accra", quote: "I started selling Intact products to my university friends. Now I make extra income every month without leaving campus!", avatar: "/img/african-american-business-woman-with-laptop.jpg" },
+  { name: "Kwame Asante", location: "Kumasi", quote: "IntactConnect made it so easy. I just share my store link on WhatsApp and the orders come in. The commissions are real!", avatar: "/img/portrait-african-american-man-sitting-cafe-working-laptop.jpg" },
+  { name: "Efya Mensah", location: "Takoradi", quote: "I love that I don't have to stock any products. Intact handles everything — I just focus on selling and earning.", avatar: "/img/african-american-woman-with-laptop-cafe.jpg" },
 ];
 
 export default function LandingPage() {
@@ -40,8 +40,8 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-border">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold">
-            <span className="gradient-text">IntactConnect</span>
+          <Link href="/">
+            <Image src="/img/logo.png" alt="IntactConnect" width={180} height={50} className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/login">
@@ -160,7 +160,7 @@ export default function LandingPage() {
                 className="bg-white rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-shadow"
               >
                 <div className="relative h-48 overflow-hidden">
-                  <Image src={item.img} alt={item.title} fill className="object-cover" />
+                  <Image src={item.img} alt={item.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
                   <div className="absolute top-3 left-3 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
                     {item.step}
                   </div>
@@ -261,7 +261,7 @@ export default function LandingPage() {
 
       {/* CTA — with background image */}
       <section className="relative py-24 overflow-hidden">
-        <Image src={CTA_IMG} alt="Young entrepreneurs" fill className="object-cover" />
+        <Image src={CTA_IMG} alt="Young entrepreneurs" fill sizes="100vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70" />
         <div className="relative max-w-3xl mx-auto px-4 text-center text-white">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
@@ -284,7 +284,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
-              <span className="gradient-text font-bold text-lg">IntactConnect</span>
+              <Image src="/img/logo.png" alt="IntactConnect" width={180} height={50} className="h-12 w-auto" />
               <p className="text-text-muted text-xs mt-1">Reseller platform by Intact Ghana</p>
             </div>
             <div className="flex items-center gap-6 text-sm text-text-muted">
