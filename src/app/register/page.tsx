@@ -2,10 +2,13 @@
 
 import React, { useState, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { Upload, Eye, EyeOff, Loader2, CheckCircle, ArrowLeft, Camera, IdCard } from "lucide-react";
+import { Upload, Eye, EyeOff, Loader2, CheckCircle, ArrowLeft, Camera, IdCard, Zap, Shield, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+const REGISTER_IMG = "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80";
 
 const ID_TYPES = [
   { value: "ghana_card", label: "Ghana Card" },
@@ -107,27 +110,57 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface px-4">
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl p-8 max-w-md w-full text-center border border-border shadow-lg">
-          <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-text mb-2">Registration Successful!</h2>
-          <p className="text-text-muted mb-6">Check your email to verify your account. After verification, an Intact admin will review your application.</p>
-          <Link href="/login"><Button className="rounded-full">Go to Login</Button></Link>
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl max-w-md w-full text-center border border-border shadow-lg overflow-hidden">
+          <div className="relative h-40">
+            <Image src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=600&q=80" alt="Success" fill className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/30 to-transparent" />
+          </div>
+          <div className="px-8 pb-8 -mt-8 relative">
+            <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <CheckCircle className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-text mb-2">You&apos;re Almost In!</h2>
+            <p className="text-text-muted mb-2 text-sm">Check your email to verify your account.</p>
+            <p className="text-text-muted mb-6 text-xs">After verification, our team will review and approve your account within 24 hours. Get ready to start earning!</p>
+            <Link href="/login"><Button className="rounded-full px-8">Go to Login</Button></Link>
+          </div>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <Link href="/" className="inline-flex items-center gap-1.5 text-text-muted hover:text-text text-sm mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back to Home
-        </Link>
+    <div className="min-h-screen bg-surface">
+      {/* Hero Banner */}
+      <div className="relative h-56 md:h-64 overflow-hidden">
+        <Image src={REGISTER_IMG} alt="Young entrepreneurs working together" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary/60" />
+        <div className="relative z-10 h-full flex flex-col justify-center px-4">
+          <div className="max-w-2xl mx-auto w-full">
+            <Link href="/" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-3">
+              <ArrowLeft className="w-4 h-4" /> Back to Home
+            </Link>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Join the Hustle</h1>
+            <p className="text-white/80 text-sm md:text-base">Sign up, get verified, and start earning from day one.</p>
+          </div>
+        </div>
+      </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8">
-            <h1 className="text-2xl font-bold text-text mb-1">Become a Reseller</h1>
-            <p className="text-text-muted mb-6 text-sm">Fill in your details to create your IntactConnect reseller account.</p>
+      {/* Perks Bar */}
+      <div className="bg-white border-b border-border">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-center gap-6 md:gap-10 text-xs text-text-muted">
+          <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-primary" /> Free to join</span>
+          <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-primary" /> ID verified</span>
+          <span className="flex items-center gap-1.5"><Wallet className="w-3.5 h-3.5 text-primary" /> MoMo payouts</span>
+        </div>
+      </div>
+
+      <div className="py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <div className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8">
+              <h2 className="text-xl font-bold text-text mb-1">Your Details</h2>
+              <p className="text-text-muted mb-6 text-sm">Fill in the form below to create your IntactConnect reseller account.</p>
 
             {error && <div className="bg-danger/10 text-danger rounded-lg px-4 py-3 mb-4 text-sm">{error}</div>}
 
@@ -269,8 +302,9 @@ export default function RegisterPage() {
                 Already have an account? <Link href="/login" className="text-primary hover:underline font-medium">Log In</Link>
               </p>
             </form>
-          </div>
-        </motion.div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
