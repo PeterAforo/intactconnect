@@ -335,9 +335,9 @@ export default function AdminDashboard() {
                       Approve
                     </Button>
                     <Button
-                      variant="destructive"
+                      variant="default"
                       onClick={() => { handleReject(selectedReseller.id); setSelectedReseller(null); }}
-                      className="flex-1"
+                      className="flex-1 bg-red-600 hover:bg-red-700"
                     >
                       <X className="w-4 h-4 mr-2" />
                       Reject
