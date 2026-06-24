@@ -207,7 +207,7 @@ export default function AdminDashboard() {
                           reseller.status === "approved"
                             ? "success"
                             : reseller.status === "rejected"
-                            ? "destructive"
+                            ? "danger"
                             : "default"
                         }
                       >
@@ -291,7 +291,7 @@ export default function AdminDashboard() {
                       selectedReseller.status === "approved"
                         ? "success"
                         : selectedReseller.status === "rejected"
-                        ? "destructive"
+                        ? "danger"
                         : "default"
                     }
                     className="mt-2"
