@@ -31,7 +31,13 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
-      router.push("/dashboard");
+      // Redirect admin users to admin dashboard, resellers to reseller dashboard
+      const roleUpper = data.user.role?.toUpperCase();
+      if (roleUpper === "ADMIN" || roleUpper === "SUPER_ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     }

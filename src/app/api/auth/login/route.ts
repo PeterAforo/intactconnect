@@ -40,16 +40,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Please verify your email first", needsVerification: true }, { status: 403 });
     }
 
-    if (!user.reseller) {
-      return NextResponse.json({ error: "No reseller account found. Please register as a reseller." }, { status: 403 });
-    }
+    // Admin users bypass reseller checks
+    const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN" || user.role === "admin" || user.role === "super_admin";
 
-    if (user.reseller.status === "pending") {
-      return NextResponse.json({ error: "Your account is awaiting admin approval", status: "pending" }, { status: 403 });
-    }
+    if (!isAdmin) {
+      if (!user.reseller) {
+        return NextResponse.json({ error: "No reseller account found. Please register as a reseller." }, { status: 403 });
+      }
 
-    if (user.reseller.status === "rejected") {
-      return NextResponse.json({ error: "Your reseller application was not approved", status: "rejected" }, { status: 403 });
+      if (user.reseller.status === "pending") {
+        return NextResponse.json({ error: "Your account is awaiting admin approval", status: "pending" }, { status: 403 });
+      }
+
+      if (user.reseller.status === "rejected") {
+        return NextResponse.json({ error: "Your reseller application was not approved", status: "rejected" }, { status: 403 });
+      }
     }
 
     // Reset login attempts
@@ -62,6 +67,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
         reseller: user.reseller,
       },
     });

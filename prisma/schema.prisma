@@ -7,13 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  CUSTOMER
+  RESELLER
+  ADMIN
+  SUPER_ADMIN
+}
+
 model User {
   id                String    @id @default(cuid())
   name              String?
   email             String    @unique
   password          String
   phone             String?
-  role              String    @default("customer")
+  role              UserRole  @default(CUSTOMER)
   avatar            String?
   emailVerified     Boolean   @default(false)
   verifyToken       String?   @unique

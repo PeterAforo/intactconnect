@@ -70,3 +70,15 @@ export async function verifyReseller(request: NextRequest) {
   }
   return { error: null, user, reseller };
 }
+
+export async function verifyAdmin(request: NextRequest) {
+  const user = await getAuthUser(request);
+  if (!user) {
+    return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }), user: null };
+  }
+  const roleUpper = user.role.toUpperCase();
+  if (roleUpper !== "ADMIN" && roleUpper !== "SUPER_ADMIN") {
+    return { error: NextResponse.json({ error: "Forbidden: Admin access required" }, { status: 403 }), user: null };
+  }
+  return { error: null, user };
+}
