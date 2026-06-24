@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Admin users bypass reseller checks
-    const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN" || user.role === "admin" || user.role === "super_admin";
+    const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
 
     if (!isAdmin) {
       if (!user.reseller) {

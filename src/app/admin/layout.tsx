@@ -32,8 +32,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       try {
         const res = await fetch("/api/auth/me");
         const data = await res.json();
-        const roleUpper = data.user?.role?.toUpperCase();
-        if (data.user && (roleUpper === "ADMIN" || roleUpper === "SUPER_ADMIN")) {
+        if (data.user && (data.user.role === "ADMIN" || data.user.role === "SUPER_ADMIN")) {
           setUser(data.user);
         } else {
           router.push("/login");
