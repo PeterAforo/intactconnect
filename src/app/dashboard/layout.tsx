@@ -117,7 +117,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Store Link + Logout */}
         <div className="p-3 border-t border-border space-y-2">
           {data?.reseller && (
-            <Link href={`/store/${data.reseller.storeSlug}`} target="_blank" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-primary/5 text-primary hover:bg-primary/10 transition-colors">
+            <Link href={`https://www.intactconnect.com.gh/store/${data.reseller.storeSlug}`} target="_blank" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-primary/5 text-primary hover:bg-primary/10 transition-colors">
               <Store className="w-4 h-4" /> View My Store
             </Link>
           )}
