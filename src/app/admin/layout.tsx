@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       try {
         const res = await fetch("/api/auth/me");
         const data = await res.json();
-        if (data.user && (data.user.role === "ADMIN" || data.user.role === "SUPER_ADMIN")) {
+        if (data.user && (data.user.role === "admin" || data.user.role === "super_admin")) {
           setUser(data.user);
         } else {
           router.push("/login");

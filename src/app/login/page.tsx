@@ -32,7 +32,7 @@ export default function LoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
       // Redirect admin users to admin dashboard, resellers to reseller dashboard
-      if (data.user.role === "ADMIN" || data.user.role === "SUPER_ADMIN") {
+      if (data.user.role === "admin" || data.user.role === "super_admin") {
         router.push("/admin");
       } else {
         router.push("/dashboard");

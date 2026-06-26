@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         email,
         password: hashedPassword,
         phone,
-        role: "CUSTOMER",
+        role: "customer",
         emailVerified: false,
         verifyToken,
         verifyTokenExpiry,

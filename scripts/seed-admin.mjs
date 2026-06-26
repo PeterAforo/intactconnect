@@ -8,7 +8,7 @@ const ADMIN_USER = {
   email: "admin@intactconnect.com",
   password: "admin123",
   phone: "0543008475",
-  role: "SUPER_ADMIN",
+  role: "super_admin",
 };
 
 async function main() {

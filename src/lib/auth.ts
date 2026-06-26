@@ -76,7 +76,7 @@ export async function verifyAdmin(request: NextRequest) {
   if (!user) {
     return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }), user: null };
   }
-  if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+  if (user.role !== "admin" && user.role !== "super_admin") {
     return { error: NextResponse.json({ error: "Forbidden: Admin access required" }, { status: 403 }), user: null };
   }
   return { error: null, user };
