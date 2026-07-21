@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
       commissionBalance: true, bio: true, phone: true, email: true,
       storeLogo: true, storeBanner: true, storeTagline: true, storeThemeColor: true,
       momoProvider: true, momoNumber: true, bankName: true, bankAccountNumber: true, bankAccountName: true,
+      selectedCategoryIds: true, selectedProductIds: true, onboardingComplete: true,
     },
   });
 

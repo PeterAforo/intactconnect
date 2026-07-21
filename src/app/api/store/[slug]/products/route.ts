@@ -12,17 +12,33 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const reseller = await prisma.reseller.findUnique({
     where: { storeSlug: slug, status: "approved" },
-    select: { id: true },
+    select: { id: true, selectedCategoryIds: true, selectedProductIds: true },
   });
 
   if (!reseller) {
     return NextResponse.json({ error: "Store not found" }, { status: 404 });
   }
 
+  const selectedCategoryIds = (reseller.selectedCategoryIds as string[] | null) || null;
+  const selectedProductIds = (reseller.selectedProductIds as string[] | null) || null;
+
   // Build filter
   const where: Record<string, unknown> = { status: "active", stock: { gt: 0 } };
   if (categoryId) where.categoryId = categoryId;
+  else if (selectedCategoryIds?.length) where.categoryId = { in: selectedCategoryIds };
   if (search) where.name = { contains: search, mode: "insensitive" };
+  if (selectedProductIds?.length) {
+    const filterIds = selectedProductIds;
+    if (where.categoryId) {
+      where.AND = [
+        { categoryId: where.categoryId },
+        { id: { in: filterIds } },
+      ];
+      delete where.categoryId;
+    } else {
+      where.id = { in: filterIds };
+    }
+  }
 
   // Sort
   let orderBy: Record<string, string> = { createdAt: "desc" };

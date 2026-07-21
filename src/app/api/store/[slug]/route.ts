@@ -9,6 +9,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     select: {
       id: true, storeName: true, storeSlug: true, bio: true, picture: true, phone: true, email: true,
       storeLogo: true, storeBanner: true, storeTagline: true, storeThemeColor: true,
+      selectedCategoryIds: true, selectedProductIds: true, onboardingComplete: true,
       promotions: {
         where: { active: true, startDate: { lte: new Date() }, endDate: { gte: new Date() } },
         orderBy: { createdAt: "desc" },
@@ -22,12 +23,28 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({ error: "Store not found" }, { status: 404 });
   }
 
-  // Get categories that have active products
+  const selectedCategoryIds = (reseller.selectedCategoryIds as string[] | null) || null;
+  const selectedProductIds = (reseller.selectedProductIds as string[] | null) || null;
+  const hasSelections = selectedCategoryIds?.length || selectedProductIds?.length;
+
+  // Category filter base
+  const categoryWhere: Record<string, unknown> = { parentId: null };
+  if (selectedCategoryIds?.length) categoryWhere.id = { in: selectedCategoryIds };
+
+  // Get parent categories with subcategories
   const categories = await prisma.category.findMany({
-    where: { products: { some: { status: "active", stock: { gt: 0 } } } },
-    select: { id: true, name: true, slug: true, image: true, _count: { select: { products: { where: { status: "active", stock: { gt: 0 } } } } } },
-    orderBy: { name: "asc" },
+    where: categoryWhere,
+    select: {
+      id: true, name: true, slug: true, image: true,
+      children: {
+        where: selectedCategoryIds?.length ? { id: { in: selectedCategoryIds } } : undefined,
+        select: { id: true, name: true, slug: true, image: true },
+        orderBy: { name: "asc" },
+      },
+      _count: { select: { products: { where: { status: "active", stock: { gt: 0 } } } } },
+    },
+    orderBy: { order: "asc" },
   });
 
-  return NextResponse.json({ ...reseller, categories });
+  return NextResponse.json({ ...reseller, categories, hasSelections });
 }

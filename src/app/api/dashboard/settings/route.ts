@@ -12,14 +12,17 @@ export async function PUT(request: NextRequest) {
     "storeName", "bio", "storeTagline", "storeThemeColor",
     "storeLogo", "storeBanner", "phone", "email",
     "momoProvider", "momoNumber", "bankName", "bankAccountNumber", "bankAccountName",
+    "onboardingComplete",
   ];
 
-  const data: Record<string, string | null> = {};
+  const data: Record<string, unknown> = {};
   for (const key of allowed) {
     if (key in body) {
       data[key] = body[key] || null;
     }
   }
+  if ("selectedCategoryIds" in body) data.selectedCategoryIds = Array.isArray(body.selectedCategoryIds) ? body.selectedCategoryIds : null;
+  if ("selectedProductIds" in body) data.selectedProductIds = Array.isArray(body.selectedProductIds) ? body.selectedProductIds : null;
 
   // storeName is required - can't be null
   if ("storeName" in data && !data.storeName) {
@@ -33,6 +36,7 @@ export async function PUT(request: NextRequest) {
       id: true, storeName: true, storeSlug: true, bio: true, phone: true, email: true,
       storeLogo: true, storeBanner: true, storeTagline: true, storeThemeColor: true,
       momoProvider: true, momoNumber: true, bankName: true, bankAccountNumber: true, bankAccountName: true,
+      selectedCategoryIds: true, selectedProductIds: true, onboardingComplete: true,
     },
   });
 

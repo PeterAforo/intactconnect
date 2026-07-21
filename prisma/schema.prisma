@@ -447,6 +447,9 @@ model Reseller {
   storeBanner        String?          // hero banner image
   storeTagline       String?          // short tagline shown on store
   storeThemeColor    String?          // hex color for store branding
+  selectedCategoryIds Json?           // reseller-selected categories to display
+  selectedProductIds  Json?           // reseller-selected products to display
+  onboardingComplete  Boolean         @default(false)
 
   commissionBalance  Float            @default(0)
   createdAt          DateTime         @default(now())

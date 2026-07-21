@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-interface CategoryItem { id: string; name: string; slug: string; image: string | null; _count: { products: number }; }
+interface SubCategoryItem { id: string; name: string; slug: string; image: string | null; }
+interface CategoryItem { id: string; name: string; slug: string; image: string | null; _count: { products: number }; children: SubCategoryItem[]; }
 interface Promotion { id: string; title: string; description: string | null; image: string | null; discount: number | null; code: string | null; }
 interface StoreData {
   id: string; storeName: string; storeSlug: string; bio: string | null; picture: string; phone: string; email: string;
@@ -181,21 +182,37 @@ export default function StorePage() {
 
       {/* Main layout: Categories sidebar + Products */}
       <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row gap-6">
-        {/* Categories Sidebar */}
+        {/* Categories Mega Menu Sidebar */}
         {store!.categories && store!.categories.length > 0 && (
-          <aside className="w-full lg:w-56 shrink-0">
+          <aside className="w-full lg:w-64 shrink-0">
             <h3 className="font-semibold text-text text-sm mb-3 flex items-center gap-2"><Tag className="w-4 h-4" /> Categories</h3>
-            <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
+            <div className="bg-white rounded-xl border border-border p-3">
               <button onClick={() => { setActiveCategory(null); setPage(1); }}
-                className={`shrink-0 text-left px-3 py-2 rounded-lg text-sm border transition-colors ${!activeCategory ? "bg-primary text-white border-primary" : "bg-white border-border text-text-muted hover:border-primary/30"}`}>
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors mb-2 ${!activeCategory ? "bg-primary text-white" : "text-text-muted hover:bg-surface"}`}>
                 All Products
               </button>
-              {store!.categories.map((cat) => (
-                <button key={cat.id} onClick={() => { setActiveCategory(cat.id); setPage(1); }}
-                  className={`shrink-0 text-left px-3 py-2 rounded-lg text-sm border transition-colors ${activeCategory === cat.id ? "bg-primary text-white border-primary" : "bg-white border-border text-text-muted hover:border-primary/30"}`}>
-                  {cat.name} ({cat._count.products})
-                </button>
-              ))}
+              <div className="space-y-2">
+                {store!.categories.map((cat) => (
+                  <div key={cat.id} className="border-t border-border pt-2 first:border-t-0 first:pt-0">
+                    <p className="px-3 py-1 text-xs font-semibold text-text uppercase tracking-wide">{cat.name}</p>
+                    {cat.children && cat.children.length > 0 ? (
+                      <div className="space-y-0.5">
+                        {cat.children.map((sub) => (
+                          <button key={sub.id} onClick={() => { setActiveCategory(sub.id); setPage(1); }}
+                            className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${activeCategory === sub.id ? "bg-primary/10 text-primary font-medium" : "text-text-muted hover:bg-surface"}`}>
+                            {sub.name}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <button onClick={() => { setActiveCategory(cat.id); setPage(1); }}
+                        className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${activeCategory === cat.id ? "bg-primary/10 text-primary font-medium" : "text-text-muted hover:bg-surface"}`}>
+                        {cat.name}
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </aside>
         )}

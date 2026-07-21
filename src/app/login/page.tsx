@@ -62,9 +62,11 @@ export default function LoginPage() {
         }
         return;
       }
-      // Redirect admin users to admin dashboard, resellers to reseller dashboard
+      // Redirect admin users to admin dashboard, resellers to onboarding (first time) or dashboard
       if (data.user.role === "admin" || data.user.role === "super_admin") {
         router.push("/admin");
+      } else if (data.user.reseller && data.user.reseller.onboardingComplete === false) {
+        router.push("/dashboard/onboarding");
       } else {
         router.push("/dashboard");
       }

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { reseller: { select: { id: true, status: true, storeName: true, storeSlug: true } } },
+      include: { reseller: { select: { id: true, status: true, storeName: true, storeSlug: true, onboardingComplete: true } } },
     });
 
     if (!user) {
