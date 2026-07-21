@@ -140,6 +140,14 @@ export default function StorePage() {
         </div>
       </header>
 
+      {/* Store Banner */}
+      {store!.storeBanner && (
+        <div className="w-full h-40 sm:h-52 md:h-64 relative overflow-hidden">
+          <img src={store!.storeBanner} alt={`${store!.storeName} banner`} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        </div>
+      )}
+
       {/* Store Bio / Tagline */}
       {(store!.storeTagline || store!.bio) && (
         <div className="max-w-7xl mx-auto px-4 py-4">
