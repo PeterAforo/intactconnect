@@ -179,51 +179,56 @@ export default function StorePage() {
         </div>
       )}
 
-      {/* Categories */}
-      {store!.categories && store!.categories.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 pb-2">
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            <button onClick={() => { setActiveCategory(null); setPage(1); }}
-              className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-colors ${!activeCategory ? "bg-primary text-white border-primary" : "bg-white border-border text-text-muted hover:border-primary/30"}`}>
-              <Tag className="w-3 h-3 inline mr-1" />All
-            </button>
-            {store!.categories.map((cat) => (
-              <button key={cat.id} onClick={() => { setActiveCategory(cat.id); setPage(1); }}
-                className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-colors ${activeCategory === cat.id ? "bg-primary text-white border-primary" : "bg-white border-border text-text-muted hover:border-primary/30"}`}>
-                {cat.name} ({cat._count.products})
+      {/* Main layout: Categories sidebar + Products */}
+      <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row gap-6">
+        {/* Categories Sidebar */}
+        {store!.categories && store!.categories.length > 0 && (
+          <aside className="w-full lg:w-56 shrink-0">
+            <h3 className="font-semibold text-text text-sm mb-3 flex items-center gap-2"><Tag className="w-4 h-4" /> Categories</h3>
+            <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
+              <button onClick={() => { setActiveCategory(null); setPage(1); }}
+                className={`shrink-0 text-left px-3 py-2 rounded-lg text-sm border transition-colors ${!activeCategory ? "bg-primary text-white border-primary" : "bg-white border-border text-text-muted hover:border-primary/30"}`}>
+                All Products
               </button>
-            ))}
-          </div>
-        </div>
-      )}
+              {store!.categories.map((cat) => (
+                <button key={cat.id} onClick={() => { setActiveCategory(cat.id); setPage(1); }}
+                  className={`shrink-0 text-left px-3 py-2 rounded-lg text-sm border transition-colors ${activeCategory === cat.id ? "bg-primary text-white border-primary" : "bg-white border-border text-text-muted hover:border-primary/30"}`}>
+                  {cat.name} ({cat._count.products})
+                </button>
+              ))}
+            </div>
+          </aside>
+        )}
 
-      {/* Filters */}
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-            <Input
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Search products..."
-              className="pl-10"
-            />
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
+          {/* Filters */}
+          <div className="pb-4">
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+              <div className="relative w-full sm:w-80">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                <Input
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  placeholder="Search products..."
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-text-muted text-sm">{total} products</span>
+                <select
+                  value={sort}
+                  onChange={(e) => { setSort(e.target.value); setPage(1); }}
+                  className="h-10 rounded-lg border border-border bg-white px-3 text-sm"
+                >
+                  {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-text-muted text-sm">{total} products</span>
-            <select
-              value={sort}
-              onChange={(e) => { setSort(e.target.value); setPage(1); }}
-              className="h-10 rounded-lg border border-border bg-white px-3 text-sm"
-            >
-              {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </div>
-        </div>
-      </div>
 
-      {/* Products Grid */}
-      <div className="max-w-7xl mx-auto px-4 pb-8">
+          {/* Products Grid */}
+          <div className="pb-8">
         {products.length === 0 ? (
           <div className="text-center py-16">
             <Package className="w-12 h-12 text-text-muted mx-auto mb-3" />
@@ -291,6 +296,8 @@ export default function StorePage() {
             <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Next</Button>
           </div>
         )}
+          </div>
+        </div>
       </div>
 
       {/* Cart Slide-over */}
