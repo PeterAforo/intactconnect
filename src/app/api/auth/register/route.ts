@@ -69,38 +69,48 @@ export async function POST(request: NextRequest) {
     });
 
     // Send verification email
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.intactconnect.com.gh";
     const verifyUrl = `${BASE_URL}/verify-email?token=${verifyToken}`;
-    sendEmail(
-      email,
-      "Verify your IntactConnect account",
-      emailLayout("Verify Email", `
-        <h2 style="margin:0 0 8px;color:#1a1d23;">Welcome to IntactConnect!</h2>
-        <p style="color:#666;line-height:1.6;">Hi <strong>${name}</strong>, click below to verify your email and complete registration.</p>
-        <a href="${verifyUrl}" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;margin:20px 0;">
-          Verify My Email
-        </a>
-        <p style="color:#999;font-size:13px;margin-top:16px;">After verification, an Intact admin will review and approve your account.</p>
-        <p style="color:#999;font-size:13px;">This link expires in 24 hours.</p>
-      `),
-    ).catch((e) => console.error("[Register] email error:", e));
+    try {
+      await sendEmail(
+        email,
+        "Verify your IntactConnect account",
+        emailLayout("Verify Email", `
+          <h2 style="margin:0 0 8px;color:#1a1d23;">Welcome to IntactConnect!</h2>
+          <p style="color:#666;line-height:1.6;">Hi <strong>${name}</strong>, click below to verify your email and complete registration.</p>
+          <a href="${verifyUrl}" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;margin:20px 0;">
+            Verify My Email
+          </a>
+          <p style="color:#999;font-size:13px;margin-top:16px;">After verification, an Intact admin will review and approve your account.</p>
+          <p style="color:#999;font-size:13px;">This link expires in 24 hours.</p>
+        `),
+      );
+      console.log("[Register] Verification email sent to:", email);
+    } catch (e) {
+      console.error("[Register] email error:", e);
+    }
 
     // Notify admin
     const adminEmail = process.env.ADMIN_EMAIL;
     if (adminEmail) {
-      sendEmail(
-        adminEmail,
-        `New Reseller Registration: ${name}`,
-        emailLayout("New Reseller", `
-          <h2 style="margin:0 0 8px;color:#1a1d23;">🆕 New Reseller Registration</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Phone:</strong> ${phone}</p>
-          <p><strong>Store:</strong> ${storeName}</p>
-          <p><strong>ID Type:</strong> ${nationalIdType}</p>
-          <p style="color:#999;font-size:13px;margin-top:16px;">Review and approve at your admin panel.</p>
-        `),
-      ).catch((e) => console.error("[Register] admin notification error:", e));
+      try {
+        await sendEmail(
+          adminEmail,
+          `New Reseller Registration: ${name}`,
+          emailLayout("New Reseller", `
+            <h2 style="margin:0 0 8px;color:#1a1d23;">🆕 New Reseller Registration</h2>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Store:</strong> ${storeName}</p>
+            <p><strong>ID Type:</strong> ${nationalIdType}</p>
+            <p style="color:#999;font-size:13px;margin-top:16px;">Review and approve at your admin panel.</p>
+          `),
+        );
+        console.log("[Register] Admin notification sent to:", adminEmail);
+      } catch (e) {
+        console.error("[Register] admin notification error:", e);
+      }
     }
 
     return NextResponse.json({ success: true, userId: user.id, message: "Registration successful! Please check your email to verify your account." });
