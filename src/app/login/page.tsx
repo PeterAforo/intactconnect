@@ -18,11 +18,34 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resendStatus, setResendStatus] = useState("");
+  const [resending, setResending] = useState(false);
+
+  const handleResend = async () => {
+    setResending(true);
+    setResendStatus("");
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to resend");
+      setResendStatus("Verification email sent! Check your inbox.");
+    } catch (err) {
+      setResendStatus(err instanceof Error ? err.message : "Failed to resend");
+    }
+    setResending(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setNeedsVerification(false);
+    setResendStatus("");
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -30,7 +53,15 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Login failed");
+      if (!res.ok) {
+        if (data.needsVerification) {
+          setNeedsVerification(true);
+          setError(data.error || "Please verify your email first");
+        } else {
+          throw new Error(data.error || "Login failed");
+        }
+        return;
+      }
       // Redirect admin users to admin dashboard, resellers to reseller dashboard
       if (data.user.role === "admin" || data.user.role === "super_admin") {
         router.push("/admin");
@@ -92,6 +123,20 @@ export default function LoginPage() {
               </div>
 
               {error && <div className="bg-danger/10 text-danger rounded-lg px-4 py-3 mb-4 text-sm">{error}</div>}
+              {needsVerification && (
+                <div className="bg-primary/5 rounded-lg px-4 py-3 mb-4 text-sm">
+                  <p className="text-text-muted mb-2">Didn&apos;t receive the email?</p>
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resending}
+                    className="text-primary hover:underline font-medium disabled:opacity-50"
+                  >
+                    {resending ? "Sending..." : "Resend verification email"}
+                  </button>
+                  {resendStatus && <p className="mt-2 text-text-muted text-xs">{resendStatus}</p>}
+                </div>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
