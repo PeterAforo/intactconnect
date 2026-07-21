@@ -9,7 +9,10 @@ export async function GET(
 
   const reseller = await prisma.reseller.findUnique({
     where: { storeSlug: slug, status: "approved" },
-    select: { id: true, storeName: true },
+    select: {
+      id: true, storeName: true, storeSlug: true, picture: true, storeLogo: true, storeBanner: true,
+      phone: true, email: true, bio: true, storeTagline: true, storeThemeColor: true,
+    },
   });
 
   if (!reseller) {
@@ -63,6 +66,7 @@ export async function GET(
 
   return NextResponse.json({
     ...product,
+    reseller,
     resellerPrice,
     originalPrice: product.price,
     image: product.images[0]?.url || null,

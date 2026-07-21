@@ -12,11 +12,16 @@ import { Badge } from "@/components/ui/badge";
 interface ProductImage { id: string; url: string; alt: string | null; }
 interface Review { id: string; rating: number; comment: string | null; createdAt: string; user: { name: string | null }; }
 interface RelatedProduct { id: string; name: string; slug: string; price: number; resellerPrice: number; comparePrice: number | null; image: string | null; rating: number; reviewCount: number; category: { name: string }; }
+interface ResellerInfo {
+  id: string; storeName: string; storeSlug: string; picture: string; storeLogo: string | null; storeBanner: string | null;
+  phone: string; email: string; bio: string | null; storeTagline: string | null; storeThemeColor: string | null;
+}
 interface Product {
   id: string; name: string; slug: string; description: string; price: number; resellerPrice: number;
   comparePrice: number | null; sku: string | null; stock: number; rating: number; reviewCount: number; specs: string | null;
   images: ProductImage[]; category: { id: string; name: string; slug: string };
   brand: { id: string; name: string } | null; reviews: Review[]; related: RelatedProduct[];
+  reseller: ResellerInfo;
 }
 
 const fmt = (n: number) => `GH\u20B5${n.toLocaleString("en-GH", { minimumFractionDigits: 2 })}`;
@@ -46,12 +51,25 @@ export default function ProductDetailPage() {
 
   const discount = product.comparePrice && product.comparePrice > product.resellerPrice
     ? Math.round((1 - product.resellerPrice / product.comparePrice) * 100) : 0;
+  const reseller = product.reseller;
 
   return (
     <div className="min-h-screen bg-surface">
-      {/* Header */}
+      {/* Store Header / Navbar */}
       <header className="bg-white border-b border-border sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href={`/store/${slug}`}>
+              <img src={reseller.storeLogo || reseller.picture} alt={reseller.storeName} className="w-10 h-10 rounded-full object-cover border border-border" />
+            </Link>
+            <div>
+              <h1 className="font-bold text-text text-lg leading-tight">{reseller.storeName}</h1>
+              <div className="flex items-center gap-3 text-xs text-text-muted">
+                <span className="flex items-center gap-1">{reseller.phone}</span>
+                <span className="flex items-center gap-1">{reseller.email}</span>
+              </div>
+            </div>
+          </div>
           <Link href={`/store/${slug}`} className="flex items-center gap-1.5 text-text-muted hover:text-text text-sm">
             <ArrowLeft className="w-4 h-4" /> Back to Store
           </Link>
@@ -59,6 +77,9 @@ export default function ProductDetailPage() {
       </header>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
+        <Link href={`/store/${slug}`} className="inline-flex items-center gap-1.5 text-text-muted hover:text-text text-sm mb-4">
+          <ArrowLeft className="w-4 h-4" /> Back to {reseller.storeName}
+        </Link>
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Images */}
           <div>
@@ -135,14 +156,16 @@ export default function ProductDetailPage() {
             {/* Description */}
             <div className="bg-white rounded-xl border border-border p-4 mb-4">
               <h3 className="font-semibold text-text mb-2">Description</h3>
-              <p className="text-sm text-text-muted leading-relaxed whitespace-pre-line">{product.description}</p>
+              <div className="text-sm text-text-muted leading-relaxed prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: product.description }} />
             </div>
 
             {/* Specs */}
             {product.specs && (
               <div className="bg-white rounded-xl border border-border p-4 mb-4">
                 <h3 className="font-semibold text-text mb-2">Specifications</h3>
-                <p className="text-sm text-text-muted whitespace-pre-line">{product.specs}</p>
+                <div className="text-sm text-text-muted prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: product.specs }} />
               </div>
             )}
 
