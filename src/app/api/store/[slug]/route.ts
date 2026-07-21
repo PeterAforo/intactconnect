@@ -25,26 +25,55 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const selectedCategoryIds = (reseller.selectedCategoryIds as string[] | null) || null;
   const selectedProductIds = (reseller.selectedProductIds as string[] | null) || null;
-  const hasSelections = selectedCategoryIds?.length || selectedProductIds?.length;
+  const hasSelections = Boolean(selectedCategoryIds?.length || selectedProductIds?.length);
+  const selectedSet = new Set(selectedCategoryIds || []);
+  const hasCatSelection = selectedSet.size > 0;
 
-  // Category filter base
-  const categoryWhere: Record<string, unknown> = { parentId: null };
-  if (selectedCategoryIds?.length) categoryWhere.id = { in: selectedCategoryIds };
-
-  // Get parent categories with subcategories
-  const categories = await prisma.category.findMany({
-    where: categoryWhere,
+  // Get all parent categories with their subcategories (each with product counts)
+  const allParents = await prisma.category.findMany({
+    where: { parentId: null },
     select: {
       id: true, name: true, slug: true, image: true,
       children: {
-        where: selectedCategoryIds?.length ? { id: { in: selectedCategoryIds } } : undefined,
-        select: { id: true, name: true, slug: true, image: true },
+        select: {
+          id: true, name: true, slug: true, image: true,
+          _count: { select: { products: { where: { status: "active", stock: { gt: 0 } } } } },
+        },
         orderBy: { name: "asc" },
       },
       _count: { select: { products: { where: { status: "active", stock: { gt: 0 } } } } },
     },
     orderBy: { order: "asc" },
   });
+
+  const categories = allParents
+    .map((parent) => {
+      const parentSelected = selectedSet.has(parent.id);
+
+      // Only show subcategories that have in-stock products
+      let children = parent.children.filter((c) => (c._count?.products || 0) > 0);
+
+      // If the reseller made category selections and did NOT select this whole parent,
+      // narrow the visible subcategories to the ones they explicitly picked
+      if (hasCatSelection && !parentSelected) {
+        children = children.filter((c) => selectedSet.has(c.id));
+      }
+
+      return {
+        id: parent.id,
+        name: parent.name,
+        slug: parent.slug,
+        image: parent.image,
+        children: children.map(({ id, name, slug, image }) => ({ id, name, slug, image })),
+        _count: parent._count,
+      };
+    })
+    .filter((parent) => {
+      const hasProducts = (parent._count?.products || 0) > 0 || parent.children.length > 0;
+      if (!hasCatSelection) return hasProducts;
+      // With selections: show parent if it was selected or any of its children remain visible
+      return selectedSet.has(parent.id) || parent.children.length > 0;
+    });
 
   return NextResponse.json({ ...reseller, categories, hasSelections });
 }

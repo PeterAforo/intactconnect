@@ -5,7 +5,7 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Search, ShoppingCart, Star, Phone, Mail, Store as StoreIcon, Package, Tag, Percent } from "lucide-react";
+import { Search, ShoppingCart, Star, Phone, Mail, Store as StoreIcon, Package, Tag, Percent, ChevronRight, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -51,6 +51,9 @@ export default function StorePage() {
   const [showCart, setShowCart] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [flyoutCategory, setFlyoutCategory] = useState<string | null>(null);
+  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
 
   const fetchProducts = useCallback(async () => {
     const params = new URLSearchParams();
@@ -97,6 +100,24 @@ export default function StorePage() {
   const cartCount = cart.reduce((sum, i) => sum + i.qty, 0);
 
   const formatPrice = (p: number) => `GH₵${p.toLocaleString("en-GH", { minimumFractionDigits: 2 })}`;
+
+  const chooseCategory = (id: string | null) => {
+    setActiveCategory(id);
+    setPage(1);
+    setFlyoutCategory(null);
+    setMobileCategoriesOpen(false);
+    setMobileExpanded(null);
+  };
+
+  const activeCategoryName = (() => {
+    if (!activeCategory || !store?.categories) return null;
+    for (const parent of store.categories) {
+      if (parent.id === activeCategory) return parent.name;
+      const sub = parent.children.find((c) => c.id === activeCategory);
+      if (sub) return sub.name;
+    }
+    return null;
+  })();
 
   if (loading) {
     return (
@@ -182,43 +203,67 @@ export default function StorePage() {
 
       {/* Main layout: Categories sidebar + Products */}
       <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row gap-6">
-        {/* Categories Mega Menu Sidebar */}
+        {/* Categories — Desktop sidebar (main categories only, subcategories in flyout) */}
         {store!.categories && store!.categories.length > 0 && (
-          <aside className="w-full lg:w-64 shrink-0">
+          <aside className="hidden lg:block w-60 shrink-0">
             <h3 className="font-semibold text-text text-sm mb-3 flex items-center gap-2"><Tag className="w-4 h-4" /> Categories</h3>
-            <div className="bg-white rounded-xl border border-border p-3">
-              <button onClick={() => { setActiveCategory(null); setPage(1); }}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors mb-2 ${!activeCategory ? "bg-primary text-white" : "text-text-muted hover:bg-surface"}`}>
+            <div className="bg-white rounded-xl border border-border p-2" onMouseLeave={() => setFlyoutCategory(null)}>
+              <button onClick={() => chooseCategory(null)}
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${!activeCategory ? "bg-primary text-white" : "text-text hover:bg-surface"}`}>
                 All Products
               </button>
-              <div className="space-y-2">
-                {store!.categories.map((cat) => (
-                  <div key={cat.id} className="border-t border-border pt-2 first:border-t-0 first:pt-0">
-                    <p className="px-3 py-1 text-xs font-semibold text-text uppercase tracking-wide">{cat.name}</p>
-                    {cat.children && cat.children.length > 0 ? (
-                      <div className="space-y-0.5">
+              {store!.categories.map((cat) => (
+                <div key={cat.id} className="relative" onMouseEnter={() => setFlyoutCategory(cat.id)}>
+                  <button onClick={() => chooseCategory(cat.id)}
+                    className={`w-full flex items-center justify-between gap-2 text-left px-3 py-2 rounded-lg text-sm transition-colors ${activeCategory === cat.id ? "bg-primary/10 text-primary font-medium" : "text-text hover:bg-surface"}`}>
+                    <span className="truncate">{cat.name}</span>
+                    {cat.children.length > 0 && <ChevronRight className="w-4 h-4 shrink-0 text-text-muted" />}
+                  </button>
+
+                  {/* Flyout with subcategories */}
+                  {cat.children.length > 0 && flyoutCategory === cat.id && (
+                    <div className="absolute left-full top-0 ml-1 z-50 w-56 bg-white rounded-xl border border-border shadow-xl p-2">
+                      <p className="px-3 py-1.5 text-xs font-semibold text-text uppercase tracking-wide">{cat.name}</p>
+                      <button onClick={() => chooseCategory(cat.id)}
+                        className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${activeCategory === cat.id ? "bg-primary/10 text-primary font-medium" : "text-text-muted hover:bg-surface"}`}>
+                        All {cat.name}
+                      </button>
+                      <div className="max-h-72 overflow-y-auto">
                         {cat.children.map((sub) => (
-                          <button key={sub.id} onClick={() => { setActiveCategory(sub.id); setPage(1); }}
+                          <button key={sub.id} onClick={() => chooseCategory(sub.id)}
                             className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${activeCategory === sub.id ? "bg-primary/10 text-primary font-medium" : "text-text-muted hover:bg-surface"}`}>
                             {sub.name}
                           </button>
                         ))}
                       </div>
-                    ) : (
-                      <button onClick={() => { setActiveCategory(cat.id); setPage(1); }}
-                        className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${activeCategory === cat.id ? "bg-primary/10 text-primary font-medium" : "text-text-muted hover:bg-surface"}`}>
-                        {cat.name}
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </aside>
         )}
 
         {/* Main content */}
         <div className="flex-1 min-w-0">
+          {/* Mobile: Categories trigger */}
+          {store!.categories && store!.categories.length > 0 && (
+            <div className="lg:hidden flex items-center gap-2 pb-3 overflow-x-auto">
+              <button onClick={() => setMobileCategoriesOpen(true)}
+                className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium bg-primary text-white">
+                <Tag className="w-4 h-4" /> Categories
+              </button>
+              {activeCategoryName ? (
+                <button onClick={() => chooseCategory(null)}
+                  className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm bg-primary/10 text-primary">
+                  {activeCategoryName} <X className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <span className="shrink-0 px-3 py-2 rounded-full text-sm bg-white border border-border text-text-muted">All Products</span>
+              )}
+            </div>
+          )}
+
           {/* Filters */}
           <div className="pb-4">
             <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
@@ -364,6 +409,53 @@ export default function StorePage() {
             )}
           </div>
         </>
+      )}
+
+      {/* Mobile Categories Drawer (bottom sheet) */}
+      {mobileCategoriesOpen && store!.categories && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileCategoriesOpen(false)} />
+          <div className="absolute bottom-0 left-0 right-0 max-h-[80vh] bg-white rounded-t-2xl shadow-2xl flex flex-col">
+            <div className="p-4 border-b border-border flex items-center justify-between">
+              <h2 className="font-bold text-text text-lg flex items-center gap-2"><Tag className="w-5 h-5" /> Categories</h2>
+              <button onClick={() => setMobileCategoriesOpen(false)} className="text-text-muted hover:text-text p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-3">
+              <button onClick={() => chooseCategory(null)}
+                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium mb-1 ${!activeCategory ? "bg-primary text-white" : "text-text hover:bg-surface"}`}>
+                All Products
+              </button>
+              {store!.categories.map((cat) => (
+                <div key={cat.id} className="border-t border-border first:border-t-0">
+                  <div className="flex items-center">
+                    <button onClick={() => chooseCategory(cat.id)}
+                      className={`flex-1 text-left px-3 py-2.5 rounded-lg text-sm ${activeCategory === cat.id ? "text-primary font-medium" : "text-text"}`}>
+                      {cat.name}
+                    </button>
+                    {cat.children.length > 0 && (
+                      <button onClick={() => setMobileExpanded((prev) => (prev === cat.id ? null : cat.id))}
+                        className="p-2.5 text-text-muted">
+                        <ChevronRight className={`w-4 h-4 transition-transform ${mobileExpanded === cat.id ? "rotate-90" : ""}`} />
+                      </button>
+                    )}
+                  </div>
+                  {cat.children.length > 0 && mobileExpanded === cat.id && (
+                    <div className="pl-3 pb-2 space-y-0.5">
+                      {cat.children.map((sub) => (
+                        <button key={sub.id} onClick={() => chooseCategory(sub.id)}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm ${activeCategory === sub.id ? "bg-primary/10 text-primary font-medium" : "text-text-muted hover:bg-surface"}`}>
+                          {sub.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Footer */}

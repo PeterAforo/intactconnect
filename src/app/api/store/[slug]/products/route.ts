@@ -22,10 +22,35 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const selectedCategoryIds = (reseller.selectedCategoryIds as string[] | null) || null;
   const selectedProductIds = (reseller.selectedProductIds as string[] | null) || null;
 
+  // Helper: expand a set of category IDs to include any child categories.
+  // Products live in child (leaf) categories, so a selected/clicked parent must
+  // be resolved to its children to match products correctly.
+  const expandCategoryIds = async (ids: string[]): Promise<string[]> => {
+    const cats = await prisma.category.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, children: { select: { id: true } } },
+    });
+    const set = new Set<string>();
+    for (const c of cats) {
+      set.add(c.id);
+      for (const child of c.children) set.add(child.id);
+    }
+    // Include any IDs that weren't found as categories (defensive)
+    for (const id of ids) set.add(id);
+    return [...set];
+  };
+
+  // Resolve which categories to include
+  let categoryFilter: string[] | null = null;
+  if (categoryId) {
+    categoryFilter = await expandCategoryIds([categoryId]);
+  } else if (selectedCategoryIds?.length) {
+    categoryFilter = await expandCategoryIds(selectedCategoryIds);
+  }
+
   // Build filter
   const where: Record<string, unknown> = { status: "active", stock: { gt: 0 } };
-  if (categoryId) where.categoryId = categoryId;
-  else if (selectedCategoryIds?.length) where.categoryId = { in: selectedCategoryIds };
+  if (categoryFilter) where.categoryId = { in: categoryFilter };
   if (search) where.name = { contains: search, mode: "insensitive" };
   if (selectedProductIds?.length) {
     const filterIds = selectedProductIds;
