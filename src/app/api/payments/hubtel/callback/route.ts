@@ -68,6 +68,7 @@ export async function GET(request: NextRequest) {
   const clientReference = params.get("clientReference") || params.get("checkoutId") || "";
   const code = params.get("ResponseCode") || params.get("code") || "";
   const status = params.get("status") || "";
+  const cancelled = params.get("cancelled") === "1";
 
   const order = clientReference
     ? await prisma.resellerOrder.findUnique({
@@ -79,15 +80,22 @@ export async function GET(request: NextRequest) {
   const slug = order?.reseller?.storeSlug;
   if (!slug) return NextResponse.redirect(`${baseUrl}/`);
 
-  const successUrl = new URL(`/store/${slug}/checkout/success`, baseUrl);
-  const cancelUrl = new URL(`/store/${slug}/checkout/cancel`, baseUrl);
-  if (clientReference) {
-    successUrl.searchParams.set("ref", clientReference);
-    cancelUrl.searchParams.set("ref", clientReference);
-  }
-  successUrl.searchParams.set("method", "hubtel");
-  cancelUrl.searchParams.set("method", "hubtel");
+  const isSuccess = !cancelled && (code === "0000" || status.toLowerCase() === "success" || order?.paymentStatus === "paid");
 
-  const isSuccess = code === "0000" || status.toLowerCase() === "success" || order?.paymentStatus === "paid";
-  return NextResponse.redirect(isSuccess ? successUrl.toString() : cancelUrl.toString());
+  // Mark the order cancelled if the customer aborted and it was still awaiting payment
+  if (!isSuccess && order && order.status === "pending_payment" && order.paymentStatus !== "paid") {
+    await prisma.resellerOrder.update({
+      where: { id: order.id },
+      data: { status: "cancelled", paymentStatus: "failed" },
+    });
+  }
+
+  const target = new URL(
+    isSuccess ? `/store/${slug}/checkout/success` : `/store/${slug}/checkout/cancel`,
+    baseUrl
+  );
+  if (clientReference) target.searchParams.set("ref", clientReference);
+  target.searchParams.set("method", "hubtel");
+  if (!isSuccess) target.searchParams.set("status", "cancelled");
+  return NextResponse.redirect(target.toString());
 }

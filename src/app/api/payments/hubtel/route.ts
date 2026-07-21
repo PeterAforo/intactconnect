@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       callbackUrl: `${baseUrl}/api/payments/hubtel/callback`,
       returnUrl: `${baseUrl}/api/payments/hubtel/callback`,
       merchantAccountNumber: merchantAccount,
-      cancellationUrl: `${baseUrl}/store/${order.reseller.storeSlug}/checkout/cancel?ref=${order.orderNumber}&method=hubtel`,
+      cancellationUrl: `${baseUrl}/api/payments/hubtel/callback?clientReference=${encodeURIComponent(order.orderNumber)}&cancelled=1`,
       PayeeMobileNumber: formattedPhone,
       PayeeName: `${firstName || order.shippingName || ""} ${lastName || ""}`.trim(),
       PayeeEmail: email || order.reseller.user.email || "",

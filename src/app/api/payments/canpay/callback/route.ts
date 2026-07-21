@@ -78,6 +78,15 @@ export async function GET(request: NextRequest) {
   if (!slug) return NextResponse.redirect(`${baseUrl}/`);
 
   const isSuccess = status === "success" || status === "completed" || status === "paid" || order?.paymentStatus === "paid";
+
+  // Mark the order cancelled if the customer aborted and it was still awaiting payment
+  if (!isSuccess && order && order.status === "pending_payment" && order.paymentStatus !== "paid") {
+    await prisma.resellerOrder.update({
+      where: { id: order.id },
+      data: { status: "cancelled", paymentStatus: "failed" },
+    });
+  }
+
   const target = new URL(
     isSuccess ? `/store/${slug}/checkout/success` : `/store/${slug}/checkout/cancel`,
     baseUrl
