@@ -66,10 +66,28 @@ export async function GET(request: NextRequest) {
   const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001").replace(/\/+$/, "");
   const params = request.nextUrl.searchParams;
   const clientReference = params.get("clientReference") || params.get("checkoutId") || "";
+  const code = params.get("ResponseCode") || params.get("code") || "";
+  const status = params.get("status") || "";
 
-  const successUrl = new URL("/checkout/success", baseUrl);
-  if (clientReference) successUrl.searchParams.set("ref", clientReference);
+  const order = clientReference
+    ? await prisma.resellerOrder.findUnique({
+        where: { orderNumber: clientReference },
+        include: { reseller: { select: { storeSlug: true } } },
+      })
+    : null;
+
+  const slug = order?.reseller?.storeSlug;
+  if (!slug) return NextResponse.redirect(`${baseUrl}/`);
+
+  const successUrl = new URL(`/store/${slug}/checkout/success`, baseUrl);
+  const cancelUrl = new URL(`/store/${slug}/checkout/cancel`, baseUrl);
+  if (clientReference) {
+    successUrl.searchParams.set("ref", clientReference);
+    cancelUrl.searchParams.set("ref", clientReference);
+  }
   successUrl.searchParams.set("method", "hubtel");
+  cancelUrl.searchParams.set("method", "hubtel");
 
-  return NextResponse.redirect(successUrl.toString());
+  const isSuccess = code === "0000" || status.toLowerCase() === "success" || order?.paymentStatus === "paid";
+  return NextResponse.redirect(isSuccess ? successUrl.toString() : cancelUrl.toString());
 }

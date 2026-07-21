@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: "Development mode — Hubtel credentials not configured",
-        checkoutUrl: `${baseUrl}/checkout/success?ref=${order.orderNumber}&method=hubtel`,
+        checkoutUrl: `${baseUrl}/store/${order.reseller.storeSlug}/checkout/success?ref=${order.orderNumber}&method=hubtel`,
         reference: order.orderNumber,
       });
     }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       callbackUrl: `${baseUrl}/api/payments/hubtel/callback`,
       returnUrl: `${baseUrl}/api/payments/hubtel/callback`,
       merchantAccountNumber: merchantAccount,
-      cancellationUrl: `${baseUrl}/store/${order.reseller.storeSlug}`,
+      cancellationUrl: `${baseUrl}/store/${order.reseller.storeSlug}/checkout/cancel?ref=${order.orderNumber}&method=hubtel`,
       PayeeMobileNumber: formattedPhone,
       PayeeName: `${firstName || order.shippingName || ""} ${lastName || ""}`.trim(),
       PayeeEmail: email || order.reseller.user.email || "",

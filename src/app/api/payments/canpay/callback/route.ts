@@ -64,20 +64,26 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   const refTrx = request.nextUrl.searchParams.get("ref_trx");
-  const status = request.nextUrl.searchParams.get("status")?.toLowerCase();
-  const origin = request.headers.get("origin") || request.headers.get("referer")?.replace(/\/[^/]*$/, "") || "";
-  const baseUrl = origin || process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") || "https://www.intactconnect.com.gh";
+  const status = request.nextUrl.searchParams.get("status")?.toLowerCase() || "";
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001").replace(/\/+$/, "");
 
-  if (status === "success" || status === "completed" || status === "paid") {
-    const successUrl = new URL("/checkout/success", baseUrl);
-    if (refTrx) successUrl.searchParams.set("ref", refTrx);
-    successUrl.searchParams.set("method", "canpay");
-    return NextResponse.redirect(successUrl.toString());
-  }
+  const order = refTrx
+    ? await prisma.resellerOrder.findUnique({
+        where: { orderNumber: refTrx },
+        include: { reseller: { select: { storeSlug: true } } },
+      })
+    : null;
 
-  const checkoutUrl = new URL("/checkout/success", baseUrl);
-  if (refTrx) checkoutUrl.searchParams.set("ref", refTrx);
-  checkoutUrl.searchParams.set("method", "canpay");
-  checkoutUrl.searchParams.set("status", status || "cancelled");
-  return NextResponse.redirect(checkoutUrl.toString());
+  const slug = order?.reseller?.storeSlug;
+  if (!slug) return NextResponse.redirect(`${baseUrl}/`);
+
+  const isSuccess = status === "success" || status === "completed" || status === "paid" || order?.paymentStatus === "paid";
+  const target = new URL(
+    isSuccess ? `/store/${slug}/checkout/success` : `/store/${slug}/checkout/cancel`,
+    baseUrl
+  );
+  if (refTrx) target.searchParams.set("ref", refTrx);
+  target.searchParams.set("method", "canpay");
+  if (!isSuccess) target.searchParams.set("status", status || "cancelled");
+  return NextResponse.redirect(target.toString());
 }

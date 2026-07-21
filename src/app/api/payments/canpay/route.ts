@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: "Development mode — CanPay credentials not configured",
-        redirectUrl: `${baseUrl}/checkout/success?ref=${reference}&method=canpay`,
+        redirectUrl: `${baseUrl}/store/${order.reseller.storeSlug}/checkout/success?ref=${reference}&method=canpay`,
         reference,
       });
     }

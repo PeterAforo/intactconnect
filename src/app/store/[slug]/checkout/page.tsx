@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2, CheckCircle, Package } from "lucide-react";
+import { ArrowLeft, Loader2, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -24,7 +24,6 @@ export default function CheckoutPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState<{ orderNumber: string } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -92,26 +91,12 @@ export default function CheckoutPage() {
         window.location.href = redirectUrl;
         return;
       }
-      setSuccess({ orderNumber: data.orderNumber });
+      throw new Error("Payment gateway did not return a redirect URL. Please try again.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Order failed");
     }
     setLoading(false);
   };
-
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-surface px-4">
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl p-8 max-w-md w-full text-center border border-border shadow-lg">
-          <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-text mb-2">Order Placed!</h2>
-          <p className="text-text-muted mb-2">Your order <span className="font-mono font-bold text-text">{success.orderNumber}</span> has been received.</p>
-          <p className="text-text-muted text-sm mb-6">The store owner will contact you to confirm delivery details.</p>
-          <Link href={`/store/${slug}`}><Button className="rounded-full">Continue Shopping</Button></Link>
-        </motion.div>
-      </div>
-    );
-  }
 
   if (cart.length === 0) {
     return (
