@@ -12,7 +12,7 @@ interface OrderItem {
 }
 
 interface Order {
-  id: string; orderNumber: string; total: number; commission: number; status: string;
+  id: string; orderNumber: string; total: number; commission: number; status: string; commissionReleased: boolean;
   paymentMethod: string | null; paymentStatus: string;
   shippingName: string | null; shippingPhone: string | null; shippingAddress: string | null; shippingCity: string | null;
   createdAt: string; items: OrderItem[];
@@ -20,10 +20,12 @@ interface Order {
 }
 
 const STATUS_CONFIG: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
+  pending_payment: { color: "bg-gray-100 text-gray-700", icon: <Clock className="w-4 h-4" />, label: "Awaiting Payment" },
   pending: { color: "bg-yellow-100 text-yellow-700", icon: <Clock className="w-4 h-4" />, label: "Pending" },
   processing: { color: "bg-blue-100 text-blue-700", icon: <Package className="w-4 h-4" />, label: "Processing" },
   shipped: { color: "bg-indigo-100 text-indigo-700", icon: <Truck className="w-4 h-4" />, label: "Shipped" },
   delivered: { color: "bg-green-100 text-green-700", icon: <CheckCircle className="w-4 h-4" />, label: "Delivered" },
+  completed: { color: "bg-emerald-100 text-emerald-700", icon: <CheckCircle className="w-4 h-4" />, label: "Completed" },
   cancelled: { color: "bg-red-100 text-red-700", icon: <XCircle className="w-4 h-4" />, label: "Cancelled" },
 };
 
@@ -83,9 +85,10 @@ export default function OrderDetailPage() {
         {/* Totals */}
         <div className="bg-white rounded-xl border border-border p-4 space-y-1.5">
           <div className="flex justify-between text-sm"><span className="text-text-muted">Order Total</span><span className="font-bold text-text">{formatPrice(order.total)}</span></div>
-          <div className="flex justify-between text-sm"><span className="text-text-muted">Your Commission</span><span className="font-bold text-success">+{formatPrice(order.commission)}</span></div>
+          <div className="flex justify-between text-sm"><span className="text-text-muted">Your Commission</span><span className={`font-bold ${order.commissionReleased ? "text-success" : "text-text-muted"}`}>{order.commissionReleased ? "" : "pending "}+{formatPrice(order.commission)}</span></div>
+          <div className="flex justify-between text-sm"><span className="text-text-muted">Payment Status</span><span className="text-text capitalize">{order.paymentStatus}</span></div>
           {order.paymentMethod && (
-            <div className="flex justify-between text-sm"><span className="text-text-muted">Payment</span><span className="text-text capitalize">{order.paymentMethod.replace(/_/g, " ")}</span></div>
+            <div className="flex justify-between text-sm"><span className="text-text-muted">Payment Method</span><span className="text-text capitalize">{order.paymentMethod.replace(/_/g, " ")}</span></div>
           )}
         </div>
 

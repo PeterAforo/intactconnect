@@ -12,17 +12,26 @@ interface OrderItem {
 }
 
 interface Order {
-  id: string; orderNumber: string; total: number; commission: number; status: string;
+  id: string; orderNumber: string; total: number; commission: number; status: string; paymentStatus: string; commissionReleased: boolean;
   shippingName: string | null; createdAt: string; items: OrderItem[];
   client: { name: string; phone: string } | null;
 }
 
 const STATUS_CONFIG: Record<string, { color: string; icon: React.ReactNode }> = {
+  pending_payment: { color: "bg-gray-100 text-gray-700", icon: <Clock className="w-3.5 h-3.5" /> },
   pending: { color: "bg-yellow-100 text-yellow-700", icon: <Clock className="w-3.5 h-3.5" /> },
   processing: { color: "bg-blue-100 text-blue-700", icon: <Package className="w-3.5 h-3.5" /> },
   shipped: { color: "bg-indigo-100 text-indigo-700", icon: <Truck className="w-3.5 h-3.5" /> },
   delivered: { color: "bg-green-100 text-green-700", icon: <CheckCircle className="w-3.5 h-3.5" /> },
+  completed: { color: "bg-emerald-100 text-emerald-700", icon: <CheckCircle className="w-3.5 h-3.5" /> },
   cancelled: { color: "bg-red-100 text-red-700", icon: <XCircle className="w-3.5 h-3.5" /> },
+};
+
+const PAYMENT_CONFIG: Record<string, { color: string }> = {
+  pending: { color: "bg-yellow-100 text-yellow-700" },
+  paid: { color: "bg-green-100 text-green-700" },
+  failed: { color: "bg-red-100 text-red-700" },
+  refunded: { color: "bg-gray-100 text-gray-700" },
 };
 
 export default function OrdersPage() {
@@ -47,9 +56,9 @@ export default function OrdersPage() {
 
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
-        {["all", "pending", "processing", "shipped", "delivered", "cancelled"].map((s) => (
+        {["all", "pending_payment", "processing", "shipped", "delivered", "completed", "cancelled"].map((s) => (
           <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize ${filter === s ? "bg-primary text-white" : "bg-white border border-border text-text-muted hover:bg-surface"}`}>
-            {s}
+            {s.replace(/_/g, " ")}
           </button>
         ))}
       </div>
@@ -75,9 +84,14 @@ export default function OrdersPage() {
                       <p className="font-mono font-bold text-text text-sm">{order.orderNumber}</p>
                       <p className="text-xs text-text-muted">{new Date(order.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</p>
                     </div>
-                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full capitalize ${sc.color}`}>
-                      {sc.icon} {order.status}
-                    </span>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full capitalize ${sc.color}`}>
+                        {sc.icon} {order.status.replace(/_/g, " ")}
+                      </span>
+                      <span className={`inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${PAYMENT_CONFIG[order.paymentStatus]?.color || PAYMENT_CONFIG.pending.color}`}>
+                        {order.paymentStatus}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="text-sm">
@@ -86,7 +100,9 @@ export default function OrdersPage() {
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-text text-sm">{formatPrice(order.total)}</p>
-                      <p className="text-xs text-success">+{formatPrice(order.commission)}</p>
+                      <p className={`text-xs ${order.commissionReleased ? "text-success" : "text-text-muted"}`}>
+                        {order.commissionReleased ? "+" : "pending "}+{formatPrice(order.commission)}
+                      </p>
                     </div>
                   </div>
                 </motion.div>

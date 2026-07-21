@@ -9,7 +9,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const order = await prisma.resellerOrder.findFirst({
     where: { id, resellerId: reseller!.id },
-    include: {
+    select: {
+      id: true, orderNumber: true, total: true, commission: true, status: true, paymentStatus: true, commissionReleased: true,
+      paymentMethod: true, shippingName: true, shippingPhone: true, shippingAddress: true, shippingCity: true, createdAt: true,
       client: { select: { name: true, phone: true, email: true } },
       items: { include: { product: { select: { name: true, images: { take: 1, select: { url: true } } } } } },
     },

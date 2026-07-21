@@ -20,7 +20,7 @@ export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [form, setForm] = useState({
     name: "", email: "", phone: "", address: "", city: "", region: "",
-    paymentMethod: "cod", notes: "",
+    paymentMethod: "hubtel", notes: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -72,6 +72,26 @@ export default function CheckoutPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Order failed");
+
+      const paymentRes = await fetch(`/api/payments/${form.paymentMethod}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderNumber: data.orderNumber,
+          email: form.email,
+          phone: form.phone,
+          customerName: form.name,
+          firstName: form.name,
+        }),
+      });
+      const paymentData = await paymentRes.json();
+      if (!paymentRes.ok) throw new Error(paymentData.error || "Payment initiation failed");
+
+      const redirectUrl = paymentData.checkoutUrl || paymentData.redirectUrl;
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      }
       setSuccess({ orderNumber: data.orderNumber });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Order failed");
@@ -154,8 +174,8 @@ export default function CheckoutPage() {
                   <div>
                     <label className="text-sm font-medium text-text block mb-1">Payment Method</label>
                     <select value={form.paymentMethod} onChange={(e) => update("paymentMethod", e.target.value)} className="w-full h-10 rounded-lg border border-border bg-white px-3 text-sm">
-                      <option value="cod">Cash on Delivery</option>
-                      <option value="momo">Mobile Money</option>
+                      <option value="hubtel">Pay with Hubtel (Card / MoMo)</option>
+                      <option value="canpay">Pay with CanPay (BNPL)</option>
                     </select>
                   </div>
                   <div>
@@ -164,7 +184,7 @@ export default function CheckoutPage() {
                   </div>
                   <Button type="submit" className="w-full rounded-full h-11" disabled={loading}>
                     {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                    Place Order ({formatPrice(total)})
+                    Pay {formatPrice(total)} & Place Order
                   </Button>
                 </form>
               </div>

@@ -79,43 +79,25 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       }
     }
 
-    // Create order + items + update stock in a transaction
-    const order = await prisma.$transaction(async (tx) => {
-      const ord = await tx.resellerOrder.create({
-        data: {
-          orderNumber,
-          resellerId: reseller.id,
-          clientId: clientId || null,
-          subtotal,
-          shipping: shipping || 0,
-          total,
-          commission: totalCommission,
-          paymentMethod,
-          shippingName: name,
-          shippingPhone: phone,
-          shippingAddress: address,
-          shippingCity: city,
-          shippingRegion: region || null,
-          notes: notes || null,
-          items: { create: orderItems },
-        },
-      });
-
-      // Decrease stock
-      for (const item of orderItems) {
-        await tx.product.update({
-          where: { id: item.productId },
-          data: { stock: { decrement: item.quantity } },
-        });
-      }
-
-      // Add commission to reseller balance
-      await tx.reseller.update({
-        where: { id: reseller.id },
-        data: { commissionBalance: { increment: totalCommission } },
-      });
-
-      return ord;
+    // Create pending order only — stock and commission are handled after payment
+    const order = await prisma.resellerOrder.create({
+      data: {
+        orderNumber,
+        resellerId: reseller.id,
+        clientId: clientId || null,
+        subtotal,
+        shipping: shipping || 0,
+        total,
+        commission: totalCommission,
+        paymentMethod,
+        shippingName: name,
+        shippingPhone: phone,
+        shippingAddress: address,
+        shippingCity: city,
+        shippingRegion: region || null,
+        notes: notes || null,
+        items: { create: orderItems },
+      },
     });
 
     // Send email notification to reseller
