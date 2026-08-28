@@ -326,7 +326,7 @@ export default function StorePage() {
                     <h3 className="text-sm font-medium text-text line-clamp-2 mb-2 leading-tight group-hover:text-primary">{product.name}</h3>
                     {product.rating > 0 && (
                       <div className="flex items-center gap-1 mb-2">
-                        <Star className="w-3 h-3 fill-warning text-warning" />
+                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                         <span className="text-xs text-text-muted">{product.rating.toFixed(1)} ({product.reviewCount})</span>
                       </div>
                     )}

@@ -29,7 +29,7 @@ function StarRow({ rating }: { rating: number }) {
         <Star
           key={i}
           className={`w-4 h-4 ${
-            i <= Math.round(rating) ? "text-warning fill-warning" : "text-gray-200"
+            i <= Math.round(rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200"
           }`}
         />
       ))}
@@ -42,7 +42,7 @@ function DistributionBar({ count, total, label }: { count: number; total: number
   return (
     <div className="flex items-center gap-2 text-sm">
       <span className="w-4 text-right text-text-muted">{label}</span>
-      <Star className="w-3.5 h-3.5 text-warning fill-warning shrink-0" />
+      <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400 shrink-0" />
       <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
         <div
           className="h-full bg-warning rounded-full transition-all duration-500"
@@ -88,7 +88,7 @@ function ReviewCard({ review }: { review: Review }) {
             {[1, 2, 3, 4, 5].map((s) => (
               <Star
                 key={s}
-                className={`w-3.5 h-3.5 ${s <= review.rating ? "text-warning fill-warning" : "text-gray-200"}`}
+                className={`w-3.5 h-3.5 ${s <= review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}`}
               />
             ))}
           </div>

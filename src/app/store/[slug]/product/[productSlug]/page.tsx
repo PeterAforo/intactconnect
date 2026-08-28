@@ -120,7 +120,7 @@ export default function ProductDetailPage() {
 
             {product.rating > 0 && (
               <div className="flex items-center gap-2 mb-3">
-                <div className="flex">{[1,2,3,4,5].map(s => <Star key={s} className={`w-4 h-4 ${s <= Math.round(product.rating) ? "fill-warning text-warning" : "text-gray-200"}`} />)}</div>
+                <div className="flex">{[1,2,3,4,5].map(s => <Star key={s} className={`w-4 h-4 ${s <= Math.round(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-200"}`} />)}</div>
                 <span className="text-sm text-text-muted">{product.rating.toFixed(1)} ({product.reviewCount} reviews)</span>
               </div>
             )}
