@@ -126,7 +126,7 @@ export default function StoreReviewsSection({ storeSlug, productSlug, productRat
 
   useEffect(() => { loadReviews(1); }, [loadReviews]);
 
-  const avgRating = total > 0 ? productRating : 0;
+  const avgRating = productRating || 5;
 
   if (loading) {
     return (
