@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Star, ShoppingCart, Package, Minus, Plus, ChevronLeft, ChevronRight, Truck, ShieldCheck, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import StoreReviewsSection from "@/components/store/StoreReviewsSection";
 
 interface ProductImage { id: string; url: string; alt: string | null; }
 interface Review { id: string; rating: number; comment: string | null; createdAt: string; user: { name: string | null }; }
@@ -174,23 +175,12 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Reviews */}
-        {product.reviews.length > 0 && (
-          <div className="mt-10">
-            <h2 className="text-xl font-bold text-text mb-4">Customer Reviews</h2>
-            <div className="grid gap-3">
-              {product.reviews.map(r => (
-                <div key={r.id} className="bg-white rounded-xl border border-border p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex">{[1,2,3,4,5].map(s => <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? "fill-warning text-warning" : "text-gray-200"}`} />)}</div>
-                    <span className="text-sm font-medium text-text">{r.user.name || "Customer"}</span>
-                    <span className="text-xs text-text-muted">{new Date(r.createdAt).toLocaleDateString()}</span>
-                  </div>
-                  {r.comment && <p className="text-sm text-text-muted">{r.comment}</p>}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <StoreReviewsSection
+          storeSlug={slug}
+          productSlug={productSlug}
+          productRating={product.rating}
+          reviewCount={product.reviewCount}
+        />
 
         {/* Related Products */}
         {product.related.length > 0 && (
