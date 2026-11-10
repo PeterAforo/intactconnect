@@ -289,12 +289,43 @@ export default function LandingPage() {
   const stats = data?.stats || { products: 0, categories: 0, resellers: 0 };
 
   const features = [
-    { icon: Store, title: "Your own storefront", desc: "A branded store link with your name, logo and theme — share it anywhere.", span: "md:col-span-2" },
-    { icon: TrendingUp, title: "Commission on every sale", desc: "Transparent per-category margins — you see exactly what each sale earns." },
-    { icon: Truck, title: "Intact delivers", desc: "Zero stock, zero delivery stress. We fulfill every order end-to-end." },
-    { icon: FileText, title: "Invoices & clients", desc: "Send pro invoices, keep client records, and build repeat business." },
-    { icon: Wallet, title: "MoMo & bank payouts", desc: "Withdraw your balance to MTN, Vodafone, AirtelTigo or your bank." },
-    { icon: ShieldCheck, title: "100% genuine products", desc: "Everything ships from Intact Ghana's catalog — real stock, real warranties." },
+    {
+      icon: Store, title: "Your own storefront",
+      desc: "A branded store link with your name, logo and theme — share it anywhere and it works 24/7.",
+      card: "bg-violet-50 border-violet-200/60", chip: "bg-violet-500", iconColor: "text-white",
+      hover: "hover:border-violet-300 hover:shadow-violet-500/10",
+      image: "/img/african-american-business-woman-with-laptop.jpg", span: "md:col-span-2",
+    },
+    {
+      icon: TrendingUp, title: "Commission on every sale",
+      desc: "Transparent per-category margins — you see exactly what each sale earns.",
+      card: "bg-emerald-50 border-emerald-200/60", chip: "bg-emerald-500", iconColor: "text-white",
+      hover: "hover:border-emerald-300 hover:shadow-emerald-500/10",
+    },
+    {
+      icon: Truck, title: "Intact delivers",
+      desc: "Zero stock, zero delivery stress. We fulfill every order end-to-end.",
+      card: "bg-amber-50 border-amber-200/60", chip: "bg-amber-500", iconColor: "text-white",
+      hover: "hover:border-amber-300 hover:shadow-amber-500/10",
+    },
+    {
+      icon: FileText, title: "Invoices & clients",
+      desc: "Send pro invoices, keep client records, and build repeat business.",
+      card: "bg-sky-50 border-sky-200/60", chip: "bg-sky-500", iconColor: "text-white",
+      hover: "hover:border-sky-300 hover:shadow-sky-500/10",
+    },
+    {
+      icon: Wallet, title: "MoMo & bank payouts",
+      desc: "Withdraw your balance to MTN, Vodafone, AirtelTigo or your bank.",
+      card: "bg-rose-50 border-rose-200/60", chip: "bg-rose-500", iconColor: "text-white",
+      hover: "hover:border-rose-300 hover:shadow-rose-500/10",
+    },
+    {
+      icon: ShieldCheck, title: "100% genuine products",
+      desc: "Everything ships from Intact Ghana's catalog — real stock, real warranties.",
+      card: "bg-teal-50 border-teal-200/60", chip: "bg-teal-500", iconColor: "text-white",
+      hover: "hover:border-teal-300 hover:shadow-teal-500/10",
+    },
   ];
 
   const steps = [
@@ -544,8 +575,15 @@ export default function LandingPage() {
       <section className="py-16 md:py-24 px-4 bg-white border-y border-border">
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
-            <span className="text-primary font-semibold text-xs uppercase tracking-widest">Why IntactConnect</span>
-            <h2 className="text-3xl md:text-[2.75rem] font-bold text-text mt-3 tracking-tight">Everything you need to hustle smart</h2>
+            <span className="inline-flex items-center gap-1.5 text-primary font-semibold text-xs uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-violet-500 inline-block" />
+              <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+              Why IntactConnect
+            </span>
+            <h2 className="text-3xl md:text-[2.75rem] font-bold text-text mt-3 tracking-tight">
+              Everything you need to <span className="relative inline-block">hustle smart<span className="absolute left-0 right-0 bottom-1 h-3 bg-amber-300/60 -z-10 rounded-sm" /></span>
+            </h2>
           </motion.div>
           <div className="grid md:grid-cols-3 gap-4">
             {features.map((f, i) => (
@@ -555,14 +593,31 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                whileHover={{ y: -4 }}
-                className={`bg-surface rounded-2xl p-6 border border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-black/5 transition-all group ${f.span || ""}`}
+                whileHover={{ y: -5, rotate: i % 2 === 0 ? -0.5 : 0.5 }}
+                className={`rounded-2xl border overflow-hidden hover:shadow-lg transition-all group ${f.card} ${f.hover} ${f.span || ""}`}
               >
-                <div className="w-11 h-11 bg-white rounded-xl border border-border/60 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:border-primary transition-colors">
-                  <f.icon className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
-                </div>
-                <h3 className="font-bold text-text mb-1.5">{f.title}</h3>
-                <p className="text-sm text-text-muted leading-relaxed">{f.desc}</p>
+                {f.image ? (
+                  <div className="grid sm:grid-cols-[1.1fr_1fr] h-full">
+                    <div className="p-6 flex flex-col justify-center">
+                      <div className={`w-11 h-11 ${f.chip} rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 group-hover:-rotate-6 transition-transform`}>
+                        <f.icon className={`w-5 h-5 ${f.iconColor}`} />
+                      </div>
+                      <h3 className="font-bold text-text mb-1.5 text-lg">{f.title}</h3>
+                      <p className="text-sm text-text-muted leading-relaxed">{f.desc}</p>
+                    </div>
+                    <div className="relative min-h-[160px]">
+                      <Image src={f.image} alt={f.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-6">
+                    <div className={`w-11 h-11 ${f.chip} rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-transform`}>
+                      <f.icon className={`w-5 h-5 ${f.iconColor}`} />
+                    </div>
+                    <h3 className="font-bold text-text mb-1.5">{f.title}</h3>
+                    <p className="text-sm text-text-muted leading-relaxed">{f.desc}</p>
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
