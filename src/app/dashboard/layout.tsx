@@ -38,8 +38,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     fetch("/api/auth/me").then((r) => r.json()).then((d) => {
-      if (!d.reseller || d.reseller.status !== "approved") {
-        router.push("/login");
+      if (!d.reseller) { router.push("/login"); return; }
+      if (d.reseller.status !== "approved") {
+        router.push(d.reseller.status === "pending" ? "/pending" : "/login");
         return;
       }
       setData(d);

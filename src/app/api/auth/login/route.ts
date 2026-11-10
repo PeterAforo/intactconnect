@@ -58,7 +58,15 @@ export async function POST(request: NextRequest) {
       }
 
       if (user.reseller.status === "pending") {
-        return NextResponse.json({ error: "Your account is awaiting admin approval", status: "pending" }, { status: 403 });
+        // Sign them in so they can see the pending-review screen
+        await prisma.user.update({ where: { id: user.id }, data: { loginAttempts: 0, lockedUntil: null } });
+        const pendingToken = await signToken({ userId: user.id });
+        const pendingRes = NextResponse.json({
+          success: true,
+          pendingReview: true,
+          user: { id: user.id, name: user.name, email: user.email, role: user.role },
+        });
+        return setAuthCookie(pendingRes, pendingToken);
       }
 
       if (user.reseller.status === "rejected") {

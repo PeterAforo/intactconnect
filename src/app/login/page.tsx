@@ -66,6 +66,10 @@ export default function LoginPage() {
         router.push("/become-reseller");
         return;
       }
+      if (data.pendingReview) {
+        router.push("/pending");
+        return;
+      }
       // Redirect admin users to admin dashboard, resellers to onboarding (first time) or dashboard
       if (data.user.role === "admin" || data.user.role === "super_admin") {
         router.push("/admin");
