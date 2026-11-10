@@ -50,7 +50,7 @@ export function emailLayout(title: string, body: string): string {
 <tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
   <tr>
-    <td style="background:linear-gradient(135deg,#7c3aed,#a855f7);padding:28px 32px;text-align:center;">
+    <td style="background:linear-gradient(135deg,#17140f,#3d3830);padding:28px 32px;text-align:center;">
       <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:0.5px;">
         🤝 IntactConnect
       </h1>
@@ -62,7 +62,7 @@ export function emailLayout(title: string, body: string): string {
     <td style="background:#f8f9fc;padding:20px 32px;text-align:center;border-top:1px solid #e8ecf0;">
       <p style="margin:0;color:#7a8499;font-size:12px;">
         IntactConnect &bull; Powered by Intact Ghana &bull;
-        <a href="tel:+233543645126" style="color:#7c3aed;text-decoration:none;">+233 543 645 126</a>
+        <a href="tel:+233543645126" style="color:#17140f;text-decoration:none;">+233 543 645 126</a>
       </p>
       <p style="margin:6px 0 0;color:#b0b8c9;font-size:11px;">
         © ${new Date().getFullYear()} Intact Ghana. All rights reserved.
