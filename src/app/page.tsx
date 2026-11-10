@@ -336,15 +336,18 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* ── Hero ── */}
-      <section ref={heroRef} className="pt-28 pb-16 md:pt-36 md:pb-24 px-4 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_70%_10%,rgba(23,20,15,0.05),transparent)] pointer-events-none" />
+      <section ref={heroRef} className="pt-28 pb-16 md:pt-40 md:pb-28 px-4 relative bg-[#0d0b09] overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(55%_55%_at_75%_15%,rgba(255,255,255,0.07),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(40%_40%_at_10%_90%,rgba(255,255,255,0.04),transparent)] pointer-events-none" />
+        {/* subtle grain lines */}
+        <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(255,255,255,0.06) 80px)" }} />
         <div className="max-w-6xl mx-auto grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center relative">
           <div>
             <motion.span
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: EASE }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-semibold tracking-wide mb-6"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/10 border border-white/15 text-white rounded-full text-xs font-semibold tracking-wide mb-6"
             >
               <Store className="w-3.5 h-3.5" /> RESELLER PLATFORM BY INTACT GHANA
             </motion.span>
@@ -352,16 +355,16 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.08, ease: EASE }}
-              className="text-[2.7rem] md:text-6xl lg:text-[4.2rem] font-bold text-text leading-[1.04] tracking-tight mb-6"
+              className="text-[2.7rem] md:text-6xl lg:text-[4.2rem] font-bold text-white leading-[1.04] tracking-tight mb-6"
             >
               Your network is<br />
-              <span className="gradient-text">your income.</span>
+              <span className="bg-gradient-to-r from-white to-white/50 bg-clip-text text-transparent">your income.</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.16, ease: EASE }}
-              className="text-lg text-text-muted max-w-md mb-9 leading-relaxed"
+              className="text-lg text-white/65 max-w-md mb-9 leading-relaxed"
             >
               Get a branded store stocked with Intact Ghana products. Share your link. Earn commission on every sale — zero stock, zero capital.
             </motion.p>
@@ -373,14 +376,14 @@ export default function LandingPage() {
             >
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                 <Link href="/register">
-                  <Button size="lg" className="rounded-full px-8 h-12 text-base shadow-lg shadow-black/20 w-full sm:w-auto">
+                  <Button size="lg" className="rounded-full px-8 h-12 text-base bg-white text-primary hover:bg-white/90 shadow-xl shadow-black/40 w-full sm:w-auto">
                     Start earning — free <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
               </motion.div>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                 <a href="#earnings">
-                  <Button variant="outline" size="lg" className="rounded-full px-8 h-12 text-base w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="rounded-full px-8 h-12 text-base bg-transparent border-white/25 text-white hover:bg-white/10 hover:text-white w-full sm:w-auto">
                     See what you'd earn
                   </Button>
                 </a>
@@ -390,7 +393,7 @@ export default function LandingPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.36 }}
-              className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-text-muted"
+              className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/60"
             >
               {["Free to join", "No stock needed", "MoMo payouts"].map((t, i) => (
                 <motion.span
@@ -413,7 +416,7 @@ export default function LandingPage() {
             style={{ y: mockupY, opacity: mockupOpacity }}
             className="relative pb-6"
           >
-            <div className="absolute -inset-6 bg-gradient-to-br from-primary/10 via-transparent to-transparent rounded-[2.5rem] blur-2xl pointer-events-none" />
+            <div className="absolute -inset-6 bg-gradient-to-br from-white/15 via-transparent to-transparent rounded-[2.5rem] blur-2xl pointer-events-none" />
             <StorefrontMockup examples={examples} />
             {/* floating photo badge */}
             <motion.div
