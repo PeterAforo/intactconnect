@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Check, Loader2, Package, Tag, ChevronRight, ChevronLeft, Store } from "lucide-react";
+import { Check, Loader2, Package, Tag, ChevronRight, ChevronLeft, Store, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
@@ -12,7 +12,8 @@ interface SubCategory { id: string; name: string; slug: string; image: string | 
 interface Category { id: string; name: string; slug: string; image: string | null; children: SubCategory[]; }
 interface ProductItem { id: string; name: string; slug: string; price: number; comparePrice: number | null; image: string | null; category: { id: string; name: string }; stock: number; }
 
-const STEPS = ["Categories", "Products", "Finish"];
+const STEPS = ["Categories", "Products", "Branding", "Finish"];
+const THEME_COLORS = ["#7c3aed", "#0052cc", "#0f766e", "#be185d", "#b45309", "#166534", "#0f172a", "#dc2626"];
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -23,6 +24,9 @@ export default function OnboardingPage() {
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const [storeTagline, setStoreTagline] = useState("");
+  const [storeThemeColor, setStoreThemeColor] = useState("#7c3aed");
+  const [storeSlug, setStoreSlug] = useState("");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -33,6 +37,9 @@ export default function OnboardingPage() {
         setProducts(d.products || []);
         setSelectedCategoryIds(d.selectedCategoryIds || []);
         setSelectedProductIds(d.selectedProductIds || []);
+        setStoreTagline(d.storeTagline || "");
+        setStoreThemeColor(d.storeThemeColor || "#7c3aed");
+        setStoreSlug(d.storeSlug || "");
       })
       .finally(() => setLoading(false));
   }, []);
@@ -50,7 +57,7 @@ export default function OnboardingPage() {
     await fetch("/api/dashboard/onboarding", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ selectedCategoryIds, selectedProductIds }),
+      body: JSON.stringify({ selectedCategoryIds, selectedProductIds, storeTagline, storeThemeColor }),
     });
     setSaving(false);
     if (redirect) router.push("/dashboard");
@@ -164,18 +171,81 @@ export default function OnboardingPage() {
 
         {step === 2 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <div className="bg-white rounded-2xl border border-border p-6">
+              <h2 className="text-lg font-semibold text-text mb-1 flex items-center gap-2"><Palette className="w-5 h-5" /> Brand Your Store</h2>
+              <p className="text-text-muted text-sm mb-6">Optional — you can change these later in Settings.</p>
+              <div className="space-y-5">
+                <div>
+                  <label className="text-sm font-medium text-text block mb-1">Store tagline</label>
+                  <Input
+                    value={storeTagline}
+                    onChange={(e) => setStoreTagline(e.target.value)}
+                    placeholder="Genuine products, delivered fast."
+                    maxLength={120}
+                  />
+                  <p className="text-[11px] text-text-muted mt-1">Shows under your store name on your storefront.</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-text block mb-2">Theme color</label>
+                  <div className="flex flex-wrap gap-2">
+                    {THEME_COLORS.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setStoreThemeColor(c)}
+                        className={`w-10 h-10 rounded-full border-2 transition-all ${storeThemeColor === c ? "border-text scale-110" : "border-transparent"}`}
+                        style={{ backgroundColor: c }}
+                        aria-label={c}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="border border-border rounded-xl overflow-hidden">
+                  <div className="px-4 py-3 text-white" style={{ backgroundColor: storeThemeColor }}>
+                    <p className="font-bold text-sm">Your Store Name</p>
+                    <p className="text-white/70 text-xs">{storeTagline || "Your tagline will show here"}</p>
+                  </div>
+                  <div className="px-4 py-2.5 bg-surface flex items-center gap-2 text-xs text-text-muted">
+                    <Store className="w-3.5 h-3.5" /> storefront preview
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {step === 3 && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
             <div className="bg-white rounded-2xl border border-border p-6 text-center">
               <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Check className="w-8 h-8 text-success" />
               </div>
               <h2 className="text-xl font-bold text-text mb-2">Ready to Sell!</h2>
-              <p className="text-text-muted text-sm mb-6">
+              <p className="text-text-muted text-sm mb-4">
                 You selected {selectedCategoryIds.length} categories and {selectedProductIds.length} products.
               </p>
-              <Button onClick={() => save(true)} disabled={saving} className="rounded-full h-11">
-                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
-                Finish & Go to Dashboard
-              </Button>
+              {storeSlug && (
+                <div className="bg-surface rounded-lg px-4 py-2.5 mb-5 inline-flex items-center gap-2">
+                  <p className="text-xs font-mono text-text truncate">intactconnect.com.gh/store/{storeSlug}</p>
+                </div>
+              )}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Button onClick={() => save(true)} disabled={saving} className="rounded-full h-11">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
+                  Finish & Go to Dashboard
+                </Button>
+                {storeSlug && (
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(`Check out my store — genuine Intact Ghana products:\nhttps://www.intactconnect.com.gh/store/${storeSlug}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="outline" className="rounded-full h-11 gap-2 text-[#25D366]">
+                      Share on WhatsApp
+                    </Button>
+                  </a>
+                )}
+              </div>
             </div>
           </motion.div>
         )}

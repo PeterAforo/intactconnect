@@ -42,6 +42,9 @@ export async function GET(request: NextRequest) {
     selectedCategoryIds: (reseller!.selectedCategoryIds as string[] | null) || [],
     selectedProductIds: (reseller!.selectedProductIds as string[] | null) || [],
     onboardingComplete: reseller!.onboardingComplete,
+    storeTagline: reseller!.storeTagline,
+    storeThemeColor: reseller!.storeThemeColor,
+    storeSlug: reseller!.storeSlug,
   });
 }
 
@@ -54,12 +57,15 @@ export async function PUT(request: NextRequest) {
 
   if ("selectedCategoryIds" in body) data.selectedCategoryIds = Array.isArray(body.selectedCategoryIds) ? body.selectedCategoryIds : [];
   if ("selectedProductIds" in body) data.selectedProductIds = Array.isArray(body.selectedProductIds) ? body.selectedProductIds : [];
+  if ("storeTagline" in body) data.storeTagline = typeof body.storeTagline === "string" ? body.storeTagline.slice(0, 120) || null : null;
+  if ("storeThemeColor" in body) data.storeThemeColor = typeof body.storeThemeColor === "string" && /^#[0-9a-fA-F]{6}$/.test(body.storeThemeColor) ? body.storeThemeColor : null;
 
   const updated = await prisma.reseller.update({
     where: { id: reseller!.id },
     data,
     select: {
       id: true, selectedCategoryIds: true, selectedProductIds: true, onboardingComplete: true,
+      storeTagline: true, storeThemeColor: true,
     },
   });
 
