@@ -21,24 +21,36 @@ function createTransporter() {
  */
 export async function sendEmail(to: string, subject: string, html: string) {
   const resendKey = process.env.RESEND_API_KEY;
+  const smtpConfigured = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
   const from = process.env.EMAIL_FROM ?? process.env.SMTP_FROM ?? `"IntactConnect" <${process.env.SMTP_USER}>`;
 
+  // Try Resend HTTP API first (works from Vercel serverless)
   if (resendKey) {
-    const resend = new Resend(resendKey);
-    const { error } = await resend.emails.send({ from, to, subject, html });
-    if (error) {
-      console.error("[Email] Resend error:", error);
-      throw new Error(`Email send failed: ${error.message || error.name}`);
+    try {
+      const resend = new Resend(resendKey);
+      const { error } = await resend.emails.send({ from, to, subject, html });
+      if (error) {
+        console.error("[Email] Resend rejected, falling back to SMTP:", error.message || error);
+      } else {
+        return;
+      }
+    } catch (e) {
+      console.error("[Email] Resend threw, falling back to SMTP:", e);
     }
+  }
+
+  // SMTP fallback (cPanel mail — proven working locally; also primary when
+  // no RESEND_API_KEY is set, e.g. local dev)
+  if (smtpConfigured) {
+    const transporter = createTransporter();
+    await transporter.sendMail({ from, to, subject, html });
     return;
   }
 
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn("[Email] No email provider configured (RESEND_API_KEY or SMTP_*), skipping email to:", to);
-    return;
+  if (resendKey) {
+    throw new Error("Email send failed: Resend rejected and no SMTP fallback configured");
   }
-  const transporter = createTransporter();
-  await transporter.sendMail({ from, to, subject, html });
+  console.warn("[Email] No email provider configured (RESEND_API_KEY or SMTP_*), skipping email to:", to);
 }
 
 export function emailLayout(title: string, body: string): string {
