@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { signToken, setAuthCookie } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,9 +19,9 @@ export async function POST(request: NextRequest) {
       data: { emailVerified: true, verifyToken: null, verifyTokenExpiry: null },
     });
 
-    const jwt = await signToken({ userId: user.id });
-    const res = NextResponse.json({ success: true });
-    return setAuthCookie(res, jwt);
+    // Don't auto-login — reseller still needs admin approval, and the
+    // dashboard would just bounce them back to login. Let them sign in.
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Verify email error:", error);
     return NextResponse.json({ error: "Verification failed" }, { status: 500 });

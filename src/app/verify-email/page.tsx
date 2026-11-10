@@ -23,8 +23,8 @@ function VerifyContent() {
       const data = await res.json();
       if (res.ok) {
         setStatus("success");
-        setMessage("Email verified successfully! Redirecting to dashboard...");
-        setTimeout(() => router.push("/dashboard"), 2000);
+        setMessage("Email verified! Our team will review your application and email you once approved.");
+        setTimeout(() => router.push("/login"), 3000);
       } else {
         setStatus("error");
         setMessage(data.error || "Verification failed.");

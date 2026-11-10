@@ -45,7 +45,16 @@ export async function POST(request: NextRequest) {
 
     if (!isAdmin) {
       if (!user.reseller) {
-        return NextResponse.json({ error: "No reseller account found. Please register as a reseller." }, { status: 403 });
+        // Existing customer (shared User table) — sign them in so they can
+        // complete the reseller upgrade form at /become-reseller
+        await prisma.user.update({ where: { id: user.id }, data: { loginAttempts: 0, lockedUntil: null } });
+        const upgradeToken = await signToken({ userId: user.id });
+        const upgradeRes = NextResponse.json({
+          success: true,
+          needsResellerSignup: true,
+          user: { id: user.id, name: user.name, email: user.email, role: user.role },
+        });
+        return setAuthCookie(upgradeRes, upgradeToken);
       }
 
       if (user.reseller.status === "pending") {

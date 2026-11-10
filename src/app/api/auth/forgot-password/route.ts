@@ -55,7 +55,12 @@ export async function POST(request: NextRequest) {
       `
     );
 
-    await sendEmail(user.email, "Reset Your IntactConnect Password", html);
+    try {
+      await sendEmail(user.email, "Reset Your IntactConnect Password", html);
+    } catch (e) {
+      console.error("[Forgot Password] email send failed:", e);
+      // Still return success — don't reveal whether the email delivered
+    }
 
     return NextResponse.json({ message: "If that email exists, a reset link has been sent." });
   } catch (error) {

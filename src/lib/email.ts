@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 function createTransporter() {
   return nodemailer.createTransport({
@@ -13,18 +14,31 @@ function createTransporter() {
   });
 }
 
+/**
+ * Send an email. Uses Resend HTTP API when RESEND_API_KEY is set (production —
+ * SMTP sockets are unreliable from serverless), otherwise falls back to SMTP
+ * for local dev. Throws on failure so callers can surface real errors.
+ */
 export async function sendEmail(to: string, subject: string, html: string) {
+  const resendKey = process.env.RESEND_API_KEY;
+  const from = process.env.EMAIL_FROM ?? process.env.SMTP_FROM ?? `"IntactConnect" <${process.env.SMTP_USER}>`;
+
+  if (resendKey) {
+    const resend = new Resend(resendKey);
+    const { error } = await resend.emails.send({ from, to, subject, html });
+    if (error) {
+      console.error("[Email] Resend error:", error);
+      throw new Error(`Email send failed: ${error.message || error.name}`);
+    }
+    return;
+  }
+
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn("[Email] SMTP not configured, skipping email to:", to);
+    console.warn("[Email] No email provider configured (RESEND_API_KEY or SMTP_*), skipping email to:", to);
     return;
   }
   const transporter = createTransporter();
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM ?? `"IntactConnect" <${process.env.SMTP_USER}>`,
-    to,
-    subject,
-    html,
-  });
+  await transporter.sendMail({ from, to, subject, html });
 }
 
 export function emailLayout(title: string, body: string): string {

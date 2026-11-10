@@ -77,6 +77,22 @@ export default function StorePage() {
     }).then((d) => { if (d) setStore(d); setLoading(false); });
   }, [slug]);
 
+  // Fire-and-forget view tracking (deduped per session)
+  useEffect(() => {
+    try {
+      let key = sessionStorage.getItem("ic_track_key");
+      if (!key) { key = crypto.randomUUID(); sessionStorage.setItem("ic_track_key", key); }
+      if (!sessionStorage.getItem(`ic_tracked_${slug}`)) {
+        sessionStorage.setItem(`ic_tracked_${slug}`, "1");
+        fetch(`/api/store/${slug}/track`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "store_view", sessionKey: key }),
+        }).catch(() => {});
+      }
+    } catch { /* tracking is non-critical */ }
+  }, [slug]);
+
   useEffect(() => {
     if (store) fetchProducts();
   }, [store, fetchProducts]);

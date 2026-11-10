@@ -30,6 +30,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [existingAccount, setExistingAccount] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const pictureRef = useRef<HTMLInputElement>(null);
@@ -99,7 +100,10 @@ export default function RegisterPage() {
         body: JSON.stringify({ ...form, picture, nationalIdImage }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Registration failed");
+      if (!res.ok) {
+        if (data.code === "EXISTING_ACCOUNT") setExistingAccount(true);
+        throw new Error(data.error || "Registration failed");
+      }
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
@@ -176,7 +180,16 @@ export default function RegisterPage() {
               <h1 className="text-xl font-bold text-text mb-1">Become a Reseller</h1>
               <p className="text-text-muted mb-6 text-sm">Fill in the form below to create your account.</p>
 
-              {error && <div className="bg-danger/10 text-danger rounded-lg px-4 py-3 mb-4 text-sm">{error}</div>}
+              {error && (
+                <div className="bg-danger/10 text-danger rounded-lg px-4 py-3 mb-4 text-sm">
+                  {error}
+                  {existingAccount && (
+                    <p className="mt-2">
+                      <Link href="/login" className="font-semibold underline">Log in to continue →</Link>
+                    </p>
+                  )}
+                </div>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Personal Info */}
