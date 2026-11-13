@@ -17,7 +17,7 @@ type Reseller = {
   nationalIdNumber: string;
   nationalIdImage: string;
   picture: string;
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected" | "suspended";
   user: {
     id: string;
     name: string | null;
@@ -30,7 +30,7 @@ type Reseller = {
 export default function AdminDashboard() {
   const [resellers, setResellers] = useState<Reseller[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "suspended">("all");
   const [search, setSearch] = useState("");
   const [selectedReseller, setSelectedReseller] = useState<Reseller | null>(null);
 
@@ -134,6 +134,7 @@ export default function AdminDashboard() {
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
+            <option value="suspended">Suspended</option>
           </select>
         </div>
         <div className="relative w-full md:w-80">

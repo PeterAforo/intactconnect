@@ -72,6 +72,10 @@ export async function POST(request: NextRequest) {
       if (user.reseller.status === "rejected") {
         return NextResponse.json({ error: "Your reseller application was not approved", status: "rejected" }, { status: 403 });
       }
+
+      if (user.reseller.status === "suspended") {
+        return NextResponse.json({ error: "Your reseller account has been suspended. Please contact support.", status: "suspended" }, { status: 403 });
+      }
     }
 
     // Reset login attempts
