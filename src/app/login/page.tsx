@@ -2,20 +2,19 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Loader2, ArrowLeft, TrendingUp, ShieldCheck, Smartphone } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
+import AuthShell from "@/components/auth/AuthShell";
 
-const LOGIN_IMG = "/img/african-american-business-woman-with-laptop.jpg";
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [needsVerification, setNeedsVerification] = useState(false);
@@ -70,7 +69,6 @@ export default function LoginPage() {
         router.push("/pending");
         return;
       }
-      // Redirect admin users to admin dashboard, resellers to onboarding (first time) or dashboard
       if (data.user.role === "admin" || data.user.role === "super_admin") {
         router.push("/admin");
       } else if (data.user.reseller && data.user.reseller.onboardingComplete === false) {
@@ -85,114 +83,102 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Image Panel (hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-primary">
-        <Image src={LOGIN_IMG} alt="Young professional" fill sizes="50vw" className="object-cover opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-primary/30" />
-        <div className="relative z-10 flex flex-col justify-between p-10 text-white">
-          <Link href="/"><Image src="/img/logo.png" alt="IntactConnect" width={200} height={56} className="h-14 w-auto brightness-0 invert" /></Link>
+    <AuthShell>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE }}
+      >
+        <h1 className="text-3xl font-bold text-text tracking-tight">Welcome back</h1>
+        <p className="text-text-muted text-sm mt-1.5 mb-8">Sign in to continue your hustle</p>
 
-          <div className="max-w-md">
-            <h2 className="text-3xl font-bold mb-4 leading-tight">Welcome Back, Boss.</h2>
-            <p className="text-white/70 mb-8 leading-relaxed">
-              Your dashboard is waiting. Check your orders, track commissions, and keep the hustle going.
-            </p>
-            <div className="space-y-3">
-              {[
-                { icon: TrendingUp, text: "Track your earnings in real-time" },
-                { icon: Smartphone, text: "Manage orders from your phone" },
-                { icon: ShieldCheck, text: "Secure & trusted platform" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-white/80">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                    <item.icon className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm">{item.text}</span>
-                </div>
-              ))}
+        {error && (
+          <div className="bg-danger/10 border border-danger/20 text-danger rounded-xl px-4 py-3 mb-5 text-sm flex items-start gap-2">
+            <span className="flex-1">{error}</span>
+          </div>
+        )}
+        {needsVerification && (
+          <div className="bg-surface-dark/60 border border-border rounded-xl px-4 py-3 mb-5 text-sm">
+            <p className="text-text-muted mb-2">Didn&apos;t receive the email? Check your spam folder.</p>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resending}
+              className="text-text font-semibold hover:underline disabled:opacity-50"
+            >
+              {resending ? "Sending..." : "Resend verification email"}
+            </button>
+            {resendStatus && <p className="mt-2 text-text-muted text-xs">{resendStatus}</p>}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-text block mb-1.5">Email</label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                className="w-full h-12 pl-10 pr-4 rounded-xl border border-border bg-white text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-[#0d0b09]/15 focus:border-[#0d0b09]/40 transition"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-text block mb-1.5">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full h-12 pl-10 pr-11 rounded-xl border border-border bg-white text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-[#0d0b09]/15 focus:border-[#0d0b09]/40 transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
-          <p className="text-white/40 text-xs">© {new Date().getFullYear()} Powered by Intact Ghana</p>
-        </div>
-      </div>
+          <div className="flex items-center justify-between pt-0.5">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded border-border accent-[#0d0b09]"
+              />
+              <span className="text-sm text-text-muted">Remember me</span>
+            </label>
+            <Link href="/forgot-password" className="text-sm font-medium text-text hover:underline">
+              Forgot password?
+            </Link>
+          </div>
 
-      {/* Right — Login Form */}
-      <div className="flex-1 flex items-center justify-center bg-surface px-4 py-12">
-        <div className="w-full max-w-md">
-          <Link href="/" className="inline-flex items-center gap-1.5 text-text-muted hover:text-text text-sm mb-6">
-            <ArrowLeft className="w-4 h-4" /> Back to Home
-          </Link>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full h-12 rounded-xl bg-[#0d0b09] text-white text-sm font-semibold flex items-center justify-center gap-2 hover:bg-[#2a251d] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Sign in <ArrowRight className="w-4 h-4" /></>}
+          </button>
+        </form>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8">
-              <div className="text-center mb-6">
-                <Image src="/img/logo.png" alt="IntactConnect" width={200} height={56} className="h-14 w-auto mx-auto mb-1" />
-                <p className="text-text-muted text-sm">Sign in to your reseller dashboard</p>
-              </div>
-
-              {error && <div className="bg-danger/10 text-danger rounded-lg px-4 py-3 mb-4 text-sm">{error}</div>}
-              {needsVerification && (
-                <div className="bg-primary/5 rounded-lg px-4 py-3 mb-4 text-sm">
-                  <p className="text-text-muted mb-2">Didn&apos;t receive the email?</p>
-                  <button
-                    type="button"
-                    onClick={handleResend}
-                    disabled={resending}
-                    className="text-primary hover:underline font-medium disabled:opacity-50"
-                  >
-                    {resending ? "Sending..." : "Resend verification email"}
-                  </button>
-                  {resendStatus && <p className="mt-2 text-text-muted text-xs">{resendStatus}</p>}
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-text block mb-1">Email</label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-text block mb-1">Password</label>
-                  <div className="relative">
-                    <Input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" required />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-                <Button type="submit" className="w-full rounded-full h-11" disabled={loading}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                  Sign In
-                </Button>
-              </form>
-
-              <div className="text-center mt-4">
-                <Link href="/forgot-password" className="text-primary hover:underline text-sm">Forgot your password?</Link>
-              </div>
-
-              <p className="text-center text-text-muted text-sm mt-4">
-                Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline font-medium">Register</Link>
-              </p>
-            </div>
-
-            {/* Mobile-only feature highlights */}
-            <div className="lg:hidden mt-6 grid grid-cols-3 gap-3">
-              {[
-                { icon: TrendingUp, label: "Track Earnings" },
-                { icon: Smartphone, label: "Mobile Friendly" },
-                { icon: ShieldCheck, label: "Secure" },
-              ].map((item, i) => (
-                <div key={i} className="bg-white rounded-xl border border-border p-3 text-center">
-                  <item.icon className="w-5 h-5 text-primary mx-auto mb-1" />
-                  <p className="text-[10px] text-text-muted font-medium">{item.label}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
+        <p className="text-center text-sm text-text-muted mt-8">
+          New to IntactConnect?{" "}
+          <Link href="/register" className="font-semibold text-text hover:underline">Create an account</Link>
+        </p>
+      </motion.div>
+    </AuthShell>
   );
 }

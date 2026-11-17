@@ -5,11 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, Eye, EyeOff, Loader2, CheckCircle, ArrowLeft, Camera, IdCard, Wallet, Users, TrendingUp, ChevronRight, ChevronLeft, User, ShieldCheck } from "lucide-react";
+import { Upload, Eye, EyeOff, Loader2, CheckCircle, Camera, IdCard, Wallet, ChevronRight, ChevronLeft, User, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-const REGISTER_IMG = "/img/girls-walk-along-streets-city.jpg";
+import AuthShell from "@/components/auth/AuthShell";
 
 const ID_TYPES = [
   { value: "ghana_card", label: "Ghana Card" },
@@ -157,51 +156,10 @@ function RegisterForm() {
   const inputCls = (key: string) => errors[key] ? "border-danger" : "";
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Image Panel (hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-[420px] xl:w-[480px] relative bg-primary shrink-0">
-        <Image src={REGISTER_IMG} alt="Young Ghanaian entrepreneurs" fill sizes="480px" className="object-cover opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-primary/30" />
-        <div className="relative z-10 flex flex-col justify-between p-10 text-white">
-          <Link href="/"><Image src="/img/logo.png" alt="IntactConnect" width={200} height={56} className="h-14 w-auto brightness-0 invert" /></Link>
-
-          <div className="max-w-md">
-            <h2 className="text-3xl font-bold mb-4 leading-tight">Start Your Hustle Today.</h2>
-            <p className="text-white/70 mb-8 leading-relaxed">
-              Sign up, get your own store, and earn commissions selling Intact Ghana products to your network. No stock needed.
-            </p>
-            <div className="space-y-3">
-              {[
-                { icon: Users, text: "Get your own branded storefront" },
-                { icon: TrendingUp, text: "Earn commission on every sale" },
-                { icon: Wallet, text: "Withdraw to MoMo or bank anytime" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-white/80">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                    <item.icon className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm">{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-white/40 text-xs">© {new Date().getFullYear()} Powered by Intact Ghana</p>
-        </div>
-      </div>
-
-      {/* Right — Registration Form */}
-      <div className="flex-1 bg-surface overflow-y-auto">
-        <div className="max-w-2xl mx-auto px-4 py-8 lg:py-10">
-          <Link href="/" className="inline-flex items-center gap-1.5 text-text-muted hover:text-text text-sm mb-5">
-            <ArrowLeft className="w-4 h-4" /> Back to Home
-          </Link>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8">
-              <Image src="/img/logo.png" alt="IntactConnect" width={200} height={56} className="h-14 w-auto mb-2" />
-              <h1 className="text-xl font-bold text-text mb-1">Become a Reseller</h1>
-              <p className="text-text-muted mb-6 text-sm">3 quick steps and you're ready to sell.</p>
+    <AuthShell wide>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <h1 className="text-3xl font-bold text-text tracking-tight">Create your account</h1>
+        <p className="text-text-muted text-sm mt-1.5 mb-6">Become a reseller in 3 quick steps.</p>
 
               {/* Step indicator */}
               <div className="flex items-center gap-2 mb-6">
@@ -385,11 +343,11 @@ function RegisterForm() {
                 {/* Nav buttons */}
                 <div className="flex gap-3 mt-8">
                   {step > 0 && (
-                    <Button type="button" variant="outline" onClick={() => setStep((s) => s - 1)} className="rounded-full h-12 px-6">
+                    <Button type="button" variant="outline" onClick={() => setStep((s) => s - 1)} className="rounded-xl h-12 px-6">
                       <ChevronLeft className="w-4 h-4 mr-1" /> Back
                     </Button>
                   )}
-                  <Button type="submit" className="flex-1 rounded-full h-12 text-base" disabled={loading}>
+                  <Button type="submit" className="flex-1 rounded-xl h-12 text-base" disabled={loading}>
                     {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                     {step < STEPS.length - 1 ? (<>Continue <ChevronRight className="w-4 h-4 ml-1" /></>) : "Create Account"}
                   </Button>
@@ -399,25 +357,8 @@ function RegisterForm() {
                   Already have an account? <Link href="/login" className="text-primary hover:underline font-medium">Log In</Link>
                 </p>
               </form>
-            </div>
-
-            {/* Mobile-only feature highlights */}
-            <div className="lg:hidden mt-6 grid grid-cols-3 gap-3">
-              {[
-                { icon: Users, label: "Own Storefront" },
-                { icon: TrendingUp, label: "Earn Commission" },
-                { icon: Wallet, label: "MoMo Payouts" },
-              ].map((item, i) => (
-                <div key={i} className="bg-white rounded-xl border border-border p-3 text-center">
-                  <item.icon className="w-5 h-5 text-primary mx-auto mb-1" />
-                  <p className="text-[10px] text-text-muted font-medium">{item.label}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
+      </motion.div>
+    </AuthShell>
   );
 }
 
