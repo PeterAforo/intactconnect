@@ -2,13 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Loader2, CheckCircle, KeyRound, ShieldCheck, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Mail, Loader2, CheckCircle, KeyRound } from "lucide-react";
+import AuthShell from "@/components/auth/AuthShell";
 
-const SIDE_IMG = "/img/software-engineer-coding-laptop-focusing-deep-learning.jpg";
+const inputCls =
+  "w-full h-10 px-3 rounded-lg border border-[#e2e0da] bg-white text-sm text-[#1c1917] placeholder:text-[#a8a29a] focus:outline-none focus:ring-2 focus:ring-[#0d0b09]/15 focus:border-[#0d0b09]/40 transition";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -36,122 +35,83 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Image Panel */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-primary">
-        <Image src={SIDE_IMG} alt="Professional working" fill sizes="50vw" className="object-cover opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-primary/30" />
-        <div className="relative z-10 flex flex-col justify-between p-10 text-white">
-          <Link href="/"><Image src="/img/logo.png" alt="IntactConnect" width={200} height={56} className="h-14 w-auto brightness-0 invert" /></Link>
-
-          <div className="max-w-md">
-            <h2 className="text-3xl font-bold mb-4 leading-tight">Forgot Your Password?</h2>
-            <p className="text-white/70 mb-8 leading-relaxed">
-              No worries — it happens to the best of us. We&apos;ll send you a link to reset it in seconds.
+    <AuthShell switchHref="/login" switchLabel="Back to log in">
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {sent ? (
+          <div className="text-center py-2" role="status">
+            <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-6 h-6 text-emerald-600" />
+            </div>
+            <h1 className="text-[20px] font-bold text-[#1c1917] tracking-tight mb-1.5">Check your email</h1>
+            <p className="text-[13px] text-[#6b665e] mb-1">We sent a reset link to:</p>
+            <p className="text-[13px] font-medium text-[#1c1917] mb-3 break-all">{email}</p>
+            <p className="text-[11px] text-[#a8a29a] mb-6 leading-relaxed">
+              The link expires in 1 hour. Can&apos;t find it? Check your spam folder.
             </p>
-            <div className="space-y-3">
-              {[
-                { icon: Mail, text: "Reset link sent to your email" },
-                { icon: Clock, text: "Link expires in 1 hour" },
-                { icon: ShieldCheck, text: "Secure one-time reset token" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-white/80">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                    <item.icon className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm">{item.text}</span>
-                </div>
-              ))}
+            <div className="space-y-2">
+              <button
+                onClick={() => { setSent(false); setEmail(""); }}
+                className="w-full h-10 rounded-lg border border-[#e2e0da] text-[13px] font-medium text-[#1c1917] hover:bg-[#f5f4f1] transition-colors"
+              >
+                Try a different email
+              </button>
+              <Link
+                href="/login"
+                className="block w-full h-10 rounded-lg bg-[#0d0b09] text-white text-[13px] font-semibold flex items-center justify-center hover:bg-[#2a251d] transition-colors"
+              >
+                Back to log in
+              </Link>
             </div>
           </div>
-
-          <p className="text-white/40 text-xs">© {new Date().getFullYear()} Powered by Intact Ghana</p>
-        </div>
-      </div>
-
-      {/* Right — Form */}
-      <div className="flex-1 flex items-center justify-center bg-surface px-4 py-12">
-        <div className="w-full max-w-md">
-          <Link href="/login" className="inline-flex items-center gap-1.5 text-text-muted hover:text-text text-sm mb-6">
-            <ArrowLeft className="w-4 h-4" /> Back to Login
-          </Link>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8">
-              {sent ? (
-                <div className="text-center py-4">
-                  <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-8 h-8 text-success" />
-                  </div>
-                  <h2 className="text-xl font-bold text-text mb-2">Check Your Email</h2>
-                  <p className="text-text-muted text-sm mb-1">
-                    We&apos;ve sent a password reset link to:
-                  </p>
-                  <p className="font-medium text-text mb-4">{email}</p>
-                  <p className="text-text-muted text-xs mb-6">
-                    The link will expire in 1 hour. If you don&apos;t see it, check your spam folder.
-                  </p>
-                  <div className="space-y-2">
-                    <Button onClick={() => { setSent(false); setEmail(""); }} variant="outline" className="w-full rounded-full">
-                      Try a different email
-                    </Button>
-                    <Link href="/login">
-                      <Button className="w-full rounded-full">Back to Login</Button>
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="text-center mb-6">
-                    <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <KeyRound className="w-7 h-7 text-primary" />
-                    </div>
-                    <h1 className="text-xl font-bold text-text mb-1">Reset Password</h1>
-                    <p className="text-text-muted text-sm">Enter your email and we&apos;ll send a reset link</p>
-                  </div>
-
-                  {error && <div className="bg-danger/10 text-danger rounded-lg px-4 py-3 mb-4 text-sm">{error}</div>}
-
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium text-text block mb-1">Email Address</label>
-                      <Input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@example.com"
-                        required
-                      />
-                    </div>
-                    <Button type="submit" className="w-full rounded-full h-11" disabled={loading}>
-                      {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Mail className="w-4 h-4 mr-2" />}
-                      Send Reset Link
-                    </Button>
-                  </form>
-
-                  <p className="text-center text-text-muted text-sm mt-4">
-                    Remember your password? <Link href="/login" className="text-primary hover:underline font-medium">Sign In</Link>
-                  </p>
-                </>
-              )}
+        ) : (
+          <>
+            <div className="w-11 h-11 bg-[#f0efec] rounded-full flex items-center justify-center mb-4">
+              <KeyRound className="w-5 h-5 text-[#1c1917]" />
             </div>
+            <h1 className="text-[22px] font-bold text-[#1c1917] tracking-tight leading-snug">Reset your password</h1>
+            <p className="text-[13px] text-[#6b665e] mt-1 mb-6">
+              Enter your email and we&apos;ll send you a reset link.
+            </p>
 
-            {/* Mobile feature highlights */}
-            <div className="lg:hidden mt-6 grid grid-cols-3 gap-3">
-              {[
-                { icon: Mail, label: "Email Reset" },
-                { icon: Clock, label: "1 Hour Link" },
-                { icon: ShieldCheck, label: "Secure" },
-              ].map((item, i) => (
-                <div key={i} className="bg-white rounded-xl border border-border p-3 text-center">
-                  <item.icon className="w-5 h-5 text-primary mx-auto mb-1" />
-                  <p className="text-[10px] text-text-muted font-medium">{item.label}</p>
+            {error && (
+              <div role="alert" className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2.5 mb-4 text-[13px]">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              <div>
+                <label htmlFor="email" className="text-[13px] font-medium text-[#1c1917] block mb-1.5">Email address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#a8a29a] pointer-events-none" />
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    required
+                    className={`${inputCls} pl-9`}
+                  />
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-10 rounded-lg bg-[#0d0b09] text-white text-[13px] font-semibold flex items-center justify-center gap-2 hover:bg-[#2a251d] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send reset link"}
+              </button>
+            </form>
+          </>
+        )}
+      </motion.div>
+    </AuthShell>
   );
 }

@@ -4,17 +4,19 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+const inputCls =
+  "w-full h-10 px-3 rounded-lg border border-[#e2e0da] bg-white text-sm text-[#1c1917] placeholder:text-[#a8a29a] focus:outline-none focus:ring-2 focus:ring-[#0d0b09]/15 focus:border-[#0d0b09]/40 transition";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [needsVerification, setNeedsVerification] = useState(false);
@@ -83,66 +85,70 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthShell>
+    <AuthShell switchHref="/register" switchLabel="Sign up">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: EASE }}
+        transition={{ duration: 0.5, ease: EASE }}
       >
-        <h1 className="text-3xl font-bold text-text tracking-tight">Welcome back</h1>
-        <p className="text-text-muted text-sm mt-1.5 mb-8">Sign in to continue your hustle</p>
+        <h1 className="text-[22px] font-bold text-[#1c1917] tracking-tight leading-snug">Sign in to IntactConnect</h1>
+        <p className="text-[13px] text-[#6b665e] mt-1 mb-6">Welcome back — your store is waiting.</p>
 
         {error && (
-          <div className="bg-danger/10 border border-danger/20 text-danger rounded-xl px-4 py-3 mb-5 text-sm flex items-start gap-2">
-            <span className="flex-1">{error}</span>
+          <div role="alert" className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2.5 mb-4 text-[13px]">
+            {error}
           </div>
         )}
         {needsVerification && (
-          <div className="bg-surface-dark/60 border border-border rounded-xl px-4 py-3 mb-5 text-sm">
-            <p className="text-text-muted mb-2">Didn&apos;t receive the email? Check your spam folder.</p>
+          <div className="bg-[#f5f4f1] border border-[#e2e0da] rounded-lg px-3 py-2.5 mb-4 text-[13px]">
+            <p className="text-[#6b665e] mb-1.5">Didn&apos;t receive the email? Check your spam folder.</p>
             <button
               type="button"
               onClick={handleResend}
               disabled={resending}
-              className="text-text font-semibold hover:underline disabled:opacity-50"
+              className="text-[#1c1917] font-medium hover:underline disabled:opacity-50"
             >
               {resending ? "Sending..." : "Resend verification email"}
             </button>
-            {resendStatus && <p className="mt-2 text-text-muted text-xs">{resendStatus}</p>}
+            {resendStatus && <p className="mt-1.5 text-[#6b665e] text-xs">{resendStatus}</p>}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
-            <label className="text-sm font-medium text-text block mb-1.5">Email</label>
+            <label htmlFor="email" className="text-[13px] font-medium text-[#1c1917] block mb-1.5">Email address</label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#a8a29a] pointer-events-none" />
               <input
+                id="email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full h-12 pl-10 pr-4 rounded-xl border border-border bg-white text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-[#0d0b09]/15 focus:border-[#0d0b09]/40 transition"
+                className={`${inputCls} pl-9`}
               />
             </div>
           </div>
           <div>
-            <label className="text-sm font-medium text-text block mb-1.5">Password</label>
+            <label htmlFor="password" className="text-[13px] font-medium text-[#1c1917] block mb-1.5">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#a8a29a] pointer-events-none" />
               <input
+                id="password"
                 type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full h-12 pl-10 pr-11 rounded-xl border border-border bg-white text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-[#0d0b09]/15 focus:border-[#0d0b09]/40 transition"
+                className={`${inputCls} pl-9 pr-10`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a8a29a] hover:text-[#1c1917] transition"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -150,17 +156,8 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-0.5">
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-border accent-[#0d0b09]"
-              />
-              <span className="text-sm text-text-muted">Remember me</span>
-            </label>
-            <Link href="/forgot-password" className="text-sm font-medium text-text hover:underline">
+          <div className="text-center -mt-1">
+            <Link href="/forgot-password" className="text-[13px] text-[#6b665e] hover:text-[#1c1917] hover:underline">
               Forgot password?
             </Link>
           </div>
@@ -168,15 +165,14 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-12 rounded-xl bg-[#0d0b09] text-white text-sm font-semibold flex items-center justify-center gap-2 hover:bg-[#2a251d] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full h-10 rounded-lg bg-[#0d0b09] text-white text-[13px] font-semibold flex items-center justify-center gap-2 hover:bg-[#2a251d] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Sign in <ArrowRight className="w-4 h-4" /></>}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Log in"}
           </button>
         </form>
 
-        <p className="text-center text-sm text-text-muted mt-8">
-          New to IntactConnect?{" "}
-          <Link href="/register" className="font-semibold text-text hover:underline">Create an account</Link>
+        <p className="text-center text-[11px] text-[#a8a29a] mt-5 leading-relaxed">
+          Shop on intactghana.com? Sign in — we&apos;ll set you up as a reseller.
         </p>
       </motion.div>
     </AuthShell>

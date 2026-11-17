@@ -156,10 +156,10 @@ function RegisterForm() {
   const inputCls = (key: string) => errors[key] ? "border-danger" : "";
 
   return (
-    <AuthShell wide>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-        <h1 className="text-3xl font-bold text-text tracking-tight">Create your account</h1>
-        <p className="text-text-muted text-sm mt-1.5 mb-6">Become a reseller in 3 quick steps.</p>
+    <AuthShell switchHref="/login" switchLabel="Log in">
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <h1 className="text-[22px] font-bold text-[#1c1917] tracking-tight leading-snug">Create your IntactConnect account</h1>
+        <p className="text-[13px] text-[#6b665e] mt-1 mb-5">Become a reseller in 3 quick steps.</p>
 
               {/* Step indicator */}
               <div className="flex items-center gap-2 mb-6">
@@ -169,7 +169,7 @@ function RegisterForm() {
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${i === step ? "bg-primary text-white" : i < step ? "bg-success text-white" : "bg-surface border border-border"}`}>
                         {i < step ? <CheckCircle className="w-4 h-4" /> : i + 1}
                       </div>
-                      <span className={`text-xs font-medium hidden sm:block ${i === step ? "text-text" : ""}`}>{s.label}</span>
+                      <span className="text-xs font-medium hidden min-[1500px]:block">{s.label}</span>
                     </div>
                     {i < STEPS.length - 1 && <div className={`flex-1 h-px ${i < step ? "bg-success" : "bg-border"}`} />}
                   </React.Fragment>
@@ -196,7 +196,7 @@ function RegisterForm() {
                       <div className="space-y-6">
                         <div>
                           <h3 className="font-semibold text-text mb-3 text-sm uppercase tracking-wide">Personal Information</h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4">
                             <div>
                               <label className="text-sm font-medium text-text block mb-1">Full Name *</label>
                               <Input value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="John Doe" className={inputCls("name")} />
@@ -221,7 +221,7 @@ function RegisterForm() {
                         </div>
                         <div>
                           <h3 className="font-semibold text-text mb-3 text-sm uppercase tracking-wide">Password</h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4">
                             <div>
                               <label className="text-sm font-medium text-text block mb-1">Password *</label>
                               <div className="relative">
@@ -269,7 +269,7 @@ function RegisterForm() {
 
                         <div>
                           <h3 className="font-semibold text-text mb-3 text-sm uppercase tracking-wide">National ID Verification</h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4">
                             <div>
                               <label className="text-sm font-medium text-text block mb-1">ID Type *</label>
                               <select value={form.nationalIdType} onChange={(e) => update("nationalIdType", e.target.value)} className="w-full h-10 rounded-lg border border-border bg-white px-3 text-sm">
@@ -308,7 +308,7 @@ function RegisterForm() {
                       <div>
                         <h3 className="font-semibold text-text mb-3 text-sm uppercase tracking-wide">Payout Details <span className="text-text-muted font-normal normal-case">(optional)</span></h3>
                         <p className="text-text-muted text-xs mb-3">You can add or update these later in Settings.</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4">
                           <div>
                             <label className="text-sm font-medium text-text block mb-1">MoMo Provider</label>
                             <select value={form.momoProvider} onChange={(e) => update("momoProvider", e.target.value)} className="w-full h-10 rounded-lg border border-border bg-white px-3 text-sm">
@@ -330,7 +330,7 @@ function RegisterForm() {
                             <label className="text-sm font-medium text-text block mb-1">Account Number</label>
                             <Input value={form.bankAccountNumber} onChange={(e) => update("bankAccountNumber", e.target.value)} />
                           </div>
-                          <div className="md:col-span-2">
+                          <div>
                             <label className="text-sm font-medium text-text block mb-1">Account Name</label>
                             <Input value={form.bankAccountName} onChange={(e) => update("bankAccountName", e.target.value)} />
                           </div>
@@ -353,9 +353,6 @@ function RegisterForm() {
                   </Button>
                 </div>
 
-                <p className="text-center text-text-muted text-sm mt-4">
-                  Already have an account? <Link href="/login" className="text-primary hover:underline font-medium">Log In</Link>
-                </p>
               </form>
       </motion.div>
     </AuthShell>
