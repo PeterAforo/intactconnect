@@ -245,7 +245,7 @@ export default function DashboardPage() {
             { icon: Store, onClick: () => window.open(me?.reseller ? `https://www.intactconnect.com.gh/store/${me.reseller.storeSlug}` : "/dashboard", "_blank"), label: "View store" },
             { icon: copied ? Check : Share2, onClick: copyStoreLink, label: copied ? "Link copied" : "Copy store link" },
             { icon: Package, href: "/dashboard/catalog", label: "Catalog", external: false },
-            { icon: LifeBuoy, href: "https://wa.me/233000000000", label: "Support", external: true },
+            { icon: LifeBuoy, href: "https://wa.me/233543645126", label: "Support", external: true },
           ] as { icon: React.ComponentType<{ className?: string }>; href?: string; onClick?: () => void; label: string; external?: boolean }[]).map((b) =>
             b.href ? (
               <Link

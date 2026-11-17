@@ -22,7 +22,7 @@ const NAV_ITEMS = [
 ];
 
 const BOTTOM_ITEMS = [
-  { href: "https://wa.me/233000000000", label: "Support", icon: LifeBuoy, external: true },
+  { href: "https://wa.me/233543645126", label: "Support", icon: LifeBuoy, external: true },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
