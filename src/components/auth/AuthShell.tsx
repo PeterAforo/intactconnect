@@ -105,14 +105,12 @@ export default function AuthShell({
   switchLabel: string;
 }) {
   return (
-    <div className="min-h-screen w-full bg-[#efede8] flex items-center justify-center p-2 sm:p-4 md:p-6">
-      {/* Near-full-viewport white panel */}
-      <div className="w-full max-w-[1240px] h-[calc(100vh-1rem)] sm:h-[calc(100vh-2rem)] md:h-[calc(100vh-3rem)] min-h-[540px] bg-white rounded-[20px] sm:rounded-[28px] shadow-[0_24px_70px_-20px_rgba(13,11,9,0.25)] border border-black/[0.04] overflow-hidden flex flex-col md:flex-row">
+    <div className="h-[100dvh] w-full bg-white flex flex-col md:flex-row overflow-hidden">
 
         {/* Mobile mosaic banner */}
-        <div className="md:hidden flex gap-[4px] p-[4px] h-[104px] shrink-0" style={{ background: INK }}>
+        <div className="md:hidden flex gap-[4px] p-[4px] h-[110px] shrink-0" style={{ background: INK }}>
           {[PHOTOS.p1, PHOTOS.p2, PHOTOS.p3, PHOTOS.p4].map((src, i) => (
-            <div key={i} className="relative flex-1 min-w-0 overflow-hidden rounded-[8px]">
+            <div key={i} className="relative flex-1 min-w-0 overflow-hidden">
               <Image src={src} alt="" fill sizes="25vw" className="object-cover" />
               <div className="absolute inset-0 bg-black/25" />
             </div>
@@ -120,12 +118,12 @@ export default function AuthShell({
         </div>
 
         {/* Desktop mosaic — ~68% */}
-        <div className="hidden md:flex w-[68%] min-w-0 p-2 sm:p-2.5">
-          <MosaicGrid className="rounded-[18px]" />
+        <div className="hidden md:flex flex-[68] min-w-0 p-3 sm:p-4 bg-[#fbfaf8]">
+          <MosaicGrid className="rounded-[14px]" />
         </div>
 
         {/* Auth pane — ~32%, light surface */}
-        <div className="flex-1 md:w-[32%] min-w-0 flex flex-col bg-white relative">
+        <div className="w-full md:flex-[32] min-w-0 flex flex-col bg-white relative">
           <div className="absolute top-4 right-4 sm:top-5 sm:right-5 z-10">
             <Link
               href={switchHref}
@@ -139,7 +137,6 @@ export default function AuthShell({
             <div className="w-[72%] max-w-[300px] min-w-0">{children}</div>
           </div>
         </div>
-      </div>
     </div>
   );
 }
