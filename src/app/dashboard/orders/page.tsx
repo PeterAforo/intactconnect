@@ -46,10 +46,10 @@ export default function OrdersPage() {
   }, [filter]);
 
   return (
-    <div className="p-4 lg:p-8">
+    <div className="px-5 sm:px-7 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-text">Orders</h1>
+          <h1 className="text-[22px] font-bold tracking-tight text-text">Orders</h1>
           <p className="text-text-muted text-sm">{orders.length} orders total</p>
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function OrdersPage() {
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
         {["all", "pending_payment", "processing", "shipped", "delivered", "completed", "cancelled"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize ${filter === s ? "bg-primary text-white" : "bg-white border border-border text-text-muted hover:bg-surface"}`}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap capitalize ${filter === s ? "bg-primary text-white" : "bg-white border border-border text-text-muted hover:bg-surface"}`}>
             {s.replace(/_/g, " ")}
           </button>
         ))}
@@ -82,13 +82,13 @@ export default function OrdersPage() {
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <p className="font-mono font-bold text-text text-sm">{order.orderNumber}</p>
-                      <p className="text-xs text-text-muted">{new Date(order.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</p>
+                      <p className="text-[13px] text-text-muted">{new Date(order.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                      <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full capitalize ${sc.color}`}>
+                      <span className={`inline-flex items-center gap-1 text-[13px] font-medium px-2 py-1 rounded-full capitalize ${sc.color}`}>
                         {sc.icon} {order.status.replace(/_/g, " ")}
                       </span>
-                      <span className={`inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${PAYMENT_CONFIG[order.paymentStatus]?.color || PAYMENT_CONFIG.pending.color}`}>
+                      <span className={`inline-flex items-center text-[12px] font-medium px-2 py-0.5 rounded-full capitalize ${PAYMENT_CONFIG[order.paymentStatus]?.color || PAYMENT_CONFIG.pending.color}`}>
                         {order.paymentStatus}
                       </span>
                     </div>
@@ -96,11 +96,11 @@ export default function OrdersPage() {
                   <div className="flex items-center justify-between">
                     <div className="text-sm">
                       <p className="text-text">{order.shippingName || order.client?.name || "Unknown"}</p>
-                      <p className="text-text-muted text-xs">{order.items.length} item{order.items.length !== 1 ? "s" : ""}</p>
+                      <p className="text-text-muted text-[13px]">{order.items.length} item{order.items.length !== 1 ? "s" : ""}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-text text-sm">{formatPrice(order.total)}</p>
-                      <p className={`text-xs ${order.commissionReleased ? "text-success" : "text-text-muted"}`}>
+                      <p className={`text-[13px] ${order.commissionReleased ? "text-success" : "text-text-muted"}`}>
                         {order.commissionReleased ? "+" : "pending "}+{formatPrice(order.commission)}
                       </p>
                     </div>

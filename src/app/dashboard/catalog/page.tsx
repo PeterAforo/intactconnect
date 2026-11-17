@@ -80,9 +80,9 @@ export default function CatalogPage() {
   };
 
   return (
-    <div className="p-4 lg:p-8">
+    <div className="px-5 sm:px-7 py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text">Catalog</h1>
+        <h1 className="text-[22px] font-bold tracking-tight text-text">Catalog</h1>
         <p className="text-text-muted text-sm">Every product with your exact commission — share any product and earn the margin.</p>
       </div>
 
@@ -103,7 +103,7 @@ export default function CatalogPage() {
         </div>
       </div>
 
-      <p className="text-xs text-text-muted mb-4 tabular-nums">{total.toLocaleString()} products</p>
+      <p className="text-[13px] text-text-muted mb-4 tabular-nums">{total.toLocaleString()} products</p>
 
       {/* Grid */}
       {loading ? (
@@ -132,19 +132,19 @@ export default function CatalogPage() {
                   <div className="absolute inset-0 flex items-center justify-center"><Package className="w-8 h-8 text-border" /></div>
                 )}
                 {p.marginPercent > 0 && (
-                  <span className="absolute top-2 left-2 bg-success text-white text-[10px] font-bold px-2 py-0.5 rounded-md">+{p.marginPercent}%</span>
+                  <span className="absolute top-2 left-2 bg-success text-white text-[12px] font-bold px-2 py-0.5 rounded-md">+{p.marginPercent}%</span>
                 )}
               </div>
               <div className="p-3 flex flex-col flex-1">
-                <p className="text-[11px] text-text-muted truncate">{p.category}</p>
-                <p className="text-xs font-semibold text-text line-clamp-2 min-h-[2rem]">{p.name}</p>
+                <p className="text-[12px] text-text-muted truncate">{p.category}</p>
+                <p className="text-[13px] font-semibold text-text line-clamp-2 min-h-[2rem]">{p.name}</p>
                 <div className="flex items-baseline gap-2 mt-1.5">
                   <span className="text-sm font-bold text-primary tabular-nums">{formatPrice(p.resellerPrice)}</span>
                 </div>
-                <p className="text-[11px] font-semibold text-success tabular-nums">You earn {formatPrice(p.commissionPerUnit)}/unit</p>
+                <p className="text-[12px] font-semibold text-success tabular-nums">You earn {formatPrice(p.commissionPerUnit)}/unit</p>
                 <button
                   onClick={() => setShareProduct(p)}
-                  className="mt-2 flex items-center justify-center gap-1.5 text-xs font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-lg py-1.5 transition-colors"
+                  className="mt-2 flex items-center justify-center gap-1.5 text-[13px] font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-lg py-1.5 transition-colors"
                 >
                   <Share2 className="w-3.5 h-3.5" /> Share
                 </button>
@@ -172,12 +172,12 @@ export default function CatalogPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-text line-clamp-2">{shareProduct.name}</p>
-                <p className="text-xs text-success font-semibold">Earn {formatPrice(shareProduct.commissionPerUnit)} per sale</p>
+                <p className="text-[13px] text-success font-semibold">Earn {formatPrice(shareProduct.commissionPerUnit)} per sale</p>
               </div>
               <button onClick={() => setShareProduct(null)} className="p-1.5 text-text-muted hover:text-text">✕</button>
             </div>
             <div className="bg-surface rounded-lg px-3 py-2 mb-4 flex items-center gap-2">
-              <p className="text-xs text-text-muted font-mono truncate flex-1">{productUrl(shareProduct)}</p>
+              <p className="text-[13px] text-text-muted font-mono truncate flex-1">{productUrl(shareProduct)}</p>
               <button onClick={() => copyLink(shareProduct)} className="text-primary shrink-0">
                 {copiedId === shareProduct.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </button>

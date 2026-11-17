@@ -58,13 +58,13 @@ export default function SettingsPage() {
     setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000);
   };
 
-  if (loading) return <div className="p-4 lg:p-8 flex items-center justify-center min-h-[50vh]"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
+  if (loading) return <div className="px-5 sm:px-7 py-6 flex items-center justify-center min-h-[50vh]"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
 
   return (
-    <div className="p-4 lg:p-8">
+    <div className="px-5 sm:px-7 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-text flex items-center gap-2"><Settings className="w-6 h-6 text-primary" /> Settings</h1>
+          <h1 className="text-[22px] font-bold tracking-tight text-text flex items-center gap-2"><Settings className="w-6 h-6 text-primary" /> Settings</h1>
           <p className="text-text-muted text-sm">Manage your store settings and customization</p>
         </div>
         <Button onClick={handleSave} disabled={saving} size="sm">
@@ -147,8 +147,8 @@ export default function SettingsPage() {
         <div className="bg-white rounded-xl border border-border p-5">
           <h2 className="font-semibold text-text mb-3">Account</h2>
           <div className="grid grid-cols-2 gap-4 text-sm">
-            <div><span className="text-text-muted block text-xs mb-0.5">Name</span><span className="text-text font-medium">{data?.user?.name}</span></div>
-            <div><span className="text-text-muted block text-xs mb-0.5">Login Email</span><span className="text-text font-medium">{data?.user?.email}</span></div>
+            <div><span className="text-text-muted block text-[13px] mb-0.5">Name</span><span className="text-text font-medium">{data?.user?.name}</span></div>
+            <div><span className="text-text-muted block text-[13px] mb-0.5">Login Email</span><span className="text-text font-medium">{data?.user?.email}</span></div>
           </div>
         </div>
 
@@ -158,13 +158,13 @@ export default function SettingsPage() {
           <div className="space-y-3 text-sm">
             {data?.reseller?.momoProvider && (
               <div className="bg-surface rounded-lg p-3">
-                <span className="text-text-muted text-xs block mb-0.5">Mobile Money</span>
+                <span className="text-text-muted text-[13px] block mb-0.5">Mobile Money</span>
                 <span className="text-text font-medium capitalize">{data.reseller.momoProvider} — {data.reseller.momoNumber}</span>
               </div>
             )}
             {data?.reseller?.bankName && (
               <div className="bg-surface rounded-lg p-3">
-                <span className="text-text-muted text-xs block mb-0.5">Bank Account</span>
+                <span className="text-text-muted text-[13px] block mb-0.5">Bank Account</span>
                 <span className="text-text font-medium">{data.reseller.bankName} — {data.reseller.bankAccountNumber} ({data.reseller.bankAccountName})</span>
               </div>
             )}

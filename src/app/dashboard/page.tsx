@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight, MoreHorizontal, ShoppingBag, Wallet, Package,
-  Store, Share2, LifeBuoy, Plus, TrendingUp, TrendingDown, Clock,
+  Store, Share2, LifeBuoy, Plus, TrendingUp, TrendingDown, Clock, ChevronDown, Check,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -100,7 +100,7 @@ function TrendChart({ data, range }: { data: DayPoint[]; range: number }) {
       </svg>
       {hover !== null && slice[hover] && (
         <div className="flex justify-center -mt-1 mb-1">
-          <div className="bg-[#1c1917] text-white text-[11px] rounded-lg px-2.5 py-1.5 flex gap-3">
+          <div className="bg-[#1c1917] text-white text-[12px] rounded-lg px-2.5 py-1.5 flex gap-3">
             <span>{new Date(slice[hover].date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
             <span className="font-semibold">{formatPrice(slice[hover].sales)}</span>
             <span className="text-white/60">+{formatPrice(slice[hover].commission)}</span>
@@ -128,7 +128,16 @@ export default function DashboardPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [metricRange, setMetricRange] = useState(30);
   const [chartRange, setChartRange] = useState(30);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const copyStoreLink = async () => {
+    const url = me?.reseller ? `https://www.intactconnect.com.gh/store/${me.reseller.storeSlug}` : window.location.origin;
+    try { await navigator.clipboard.writeText(url); } catch { /* clipboard unavailable */ }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     Promise.all([
@@ -175,7 +184,7 @@ export default function DashboardPage() {
   );
 
   const pendingOrders = useMemo(
-    () => orders.filter((o) => ["pending", "processing", "confirmed"].includes(o.status)).slice(0, 3),
+    () => orders.filter((o) => ["pending_payment", "pending", "processing"].includes(o.status)).slice(0, 3),
     [orders]
   );
 
@@ -192,36 +201,75 @@ export default function DashboardPage() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between gap-4 pb-4 border-b border-black/[0.05]">
         <div>
-          <h1 className="text-[19px] font-bold text-[#1c1917] tracking-tight">{greeting}, {firstName}</h1>
-          <p className="text-[12px] text-[#8a857c] mt-0.5">Here&apos;s how your store is doing.</p>
+          <h1 className="text-[22px] font-bold text-[#1c1917] tracking-tight">{greeting}, {firstName}</h1>
+          <p className="text-[13px] text-[#8a857c] mt-0.5">Here&apos;s how your store is doing.</p>
         </div>
         <div className="flex items-center gap-2">
           {me?.reseller && (
-            <Link
-              href="/dashboard/settings"
-              className="hidden sm:inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[#f0efec] hover:bg-[#e6e4df] text-[12px] font-medium text-[#3a362f] transition-colors"
-            >
-              <Store className="w-3.5 h-3.5" />
-              {me.reseller.storeName}
-            </Link>
+            <div className="relative hidden sm:block">
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[#f0efec] hover:bg-[#e6e4df] text-[13px] font-medium text-[#3a362f] transition-colors"
+              >
+                <Store className="w-3.5 h-3.5" />
+                {me.reseller.storeName}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+              </button>
+              {menuOpen && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
+                  <div role="menu" className="absolute right-0 top-10 z-40 w-52 bg-white rounded-xl border border-black/[0.07] shadow-lg py-1.5">
+                    {[
+                      { label: "View public store", href: `https://www.intactconnect.com.gh/store/${me.reseller.storeSlug}`, external: true },
+                      { label: "Store branding", href: "/dashboard/onboarding" },
+                      { label: "Store settings", href: "/dashboard/settings" },
+                    ].map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        target={item.external ? "_blank" : undefined}
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 text-[13px] text-[#3a362f] hover:bg-[#f5f4f1] transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           )}
-          {[
-            { icon: Store, href: me?.reseller ? `https://www.intactconnect.com.gh/store/${me.reseller.storeSlug}` : "/dashboard", label: "View store", external: true },
-            { icon: Share2, href: "/dashboard/share", label: "Share & earn" },
-            { icon: Package, href: "/dashboard/catalog", label: "Catalog" },
+          {([
+            { icon: Store, onClick: () => window.open(me?.reseller ? `https://www.intactconnect.com.gh/store/${me.reseller.storeSlug}` : "/dashboard", "_blank"), label: "View store" },
+            { icon: copied ? Check : Share2, onClick: copyStoreLink, label: copied ? "Link copied" : "Copy store link" },
+            { icon: Package, href: "/dashboard/catalog", label: "Catalog", external: false },
             { icon: LifeBuoy, href: "https://wa.me/233000000000", label: "Support", external: true },
-          ].map((b) => (
-            <Link
-              key={b.label}
-              href={b.href}
-              target={b.external ? "_blank" : undefined}
-              aria-label={b.label}
-              title={b.label}
-              className="w-8 h-8 rounded-full bg-[#f5f4f1] hover:bg-[#eceae5] text-[#4a463f] flex items-center justify-center transition-colors"
-            >
-              <b.icon className="w-4 h-4" />
-            </Link>
-          ))}
+          ] as { icon: React.ComponentType<{ className?: string }>; href?: string; onClick?: () => void; label: string; external?: boolean }[]).map((b) =>
+            b.href ? (
+              <Link
+                key={b.label}
+                href={b.href}
+                target={b.external ? "_blank" : undefined}
+                aria-label={b.label}
+                title={b.label}
+                className="w-9 h-9 rounded-full bg-[#f5f4f1] hover:bg-[#eceae5] text-[#4a463f] flex items-center justify-center transition-colors"
+              >
+                <b.icon className="w-4 h-4" />
+              </Link>
+            ) : (
+              <button
+                key={b.label}
+                onClick={b.onClick}
+                aria-label={b.label}
+                title={b.label}
+                className="w-9 h-9 rounded-full bg-[#f5f4f1] hover:bg-[#eceae5] text-[#4a463f] flex items-center justify-center transition-colors"
+              >
+                <b.icon className="w-4 h-4" />
+              </button>
+            )
+          )}
         </div>
       </div>
 
@@ -234,12 +282,12 @@ export default function DashboardPage() {
             <div className="absolute inset-0 bg-[radial-gradient(50%_60%_at_85%_20%,rgba(255,255,255,0.07),transparent)] pointer-events-none" />
             <div className="relative flex items-start justify-between gap-4">
               <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-white/50">Available commission</p>
-                <p className="text-[11px] text-white/40 mt-1">Withdraw to MoMo or bank anytime</p>
+                <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-white/50">Available commission</p>
+                <p className="text-[12px] text-white/40 mt-1">Withdraw to MoMo or bank anytime</p>
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 <Sparkline data={featuredSpark} color="#ffffff" w={76} h={30} />
-                <span className={`text-[11px] font-semibold px-2 py-1 rounded-full ${trendPct >= 0 ? "bg-emerald-400/15 text-emerald-300" : "bg-red-400/15 text-red-300"}`}>
+                <span className={`text-[12px] font-semibold px-2 py-1 rounded-full ${trendPct >= 0 ? "bg-emerald-400/15 text-emerald-300" : "bg-red-400/15 text-red-300"}`}>
                   {trendPct >= 0 ? "↑" : "↓"} {Math.abs(trendPct)}%
                 </span>
               </div>
@@ -249,16 +297,16 @@ export default function DashboardPage() {
                 {loading ? "—" : formatPrice(stats?.commissionBalance ?? 0)}
               </p>
               <div className="flex gap-2 shrink-0">
-                <Link href="/dashboard/payouts" className="h-9 px-4 rounded-full bg-white text-[#0d0b09] text-[12px] font-semibold flex items-center hover:bg-white/90 transition-colors">
+                <Link href="/dashboard/payouts" className="h-9 px-4 rounded-full bg-white text-[#0d0b09] text-[13px] font-semibold flex items-center hover:bg-white/90 transition-colors">
                   Request payout
                 </Link>
-                <Link href="/dashboard/share" className="h-9 px-4 rounded-full border border-white/25 text-white text-[12px] font-semibold flex items-center hover:bg-white/10 transition-colors">
+                <Link href="/dashboard/share" className="h-9 px-4 rounded-full border border-white/25 text-white text-[13px] font-semibold flex items-center hover:bg-white/10 transition-colors">
                   Share store
                 </Link>
               </div>
             </div>
             {(stats?.pendingCommission ?? 0) > 0 && (
-              <p className="relative text-[11px] text-white/45 mt-3">
+              <p className="relative text-[12px] text-white/45 mt-3">
                 +{formatPrice(stats!.pendingCommission)} pending from recent orders
               </p>
             )}
@@ -267,13 +315,13 @@ export default function DashboardPage() {
           {/* Metric cards */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[14px] font-semibold text-[#1c1917]">Overview</h2>
+              <h2 className="text-[15px] font-semibold text-[#1c1917]">Overview</h2>
               <div className="flex gap-1 bg-[#f0efec] rounded-full p-0.5">
                 {RANGES.map((r) => (
                   <button
                     key={r}
                     onClick={() => setMetricRange(r)}
-                    className={`h-6 px-2.5 rounded-full text-[11px] font-medium transition-colors ${metricRange === r ? "bg-white text-[#1c1917] shadow-sm" : "text-[#8a857c] hover:text-[#1c1917]"}`}
+                    className={`h-6 px-2.5 rounded-full text-[12px] font-medium transition-colors ${metricRange === r ? "bg-white text-[#1c1917] shadow-sm" : "text-[#8a857c] hover:text-[#1c1917]"}`}
                   >
                     {r}D
                   </button>
@@ -286,18 +334,18 @@ export default function DashboardPage() {
                 return (
                   <div key={m.label} className={`rounded-xl ${m.tint} p-4 relative`}>
                     <div className="flex items-start justify-between">
-                      <p className="text-[11px] font-medium text-[#5c574e] uppercase tracking-wide">{m.label}</p>
+                      <p className="text-[12px] font-medium text-[#5c574e] uppercase tracking-wide">{m.label}</p>
                       <Link href={m.href} aria-label={`View ${m.label}`} className="text-[#8a857c] hover:text-[#1c1917] transition-colors">
                         <MoreHorizontal className="w-4 h-4" />
                       </Link>
                     </div>
                     <div className="flex items-end justify-between mt-2">
-                      <p className="text-[22px] font-bold text-[#1c1917] tabular-nums leading-none">
+                      <p className="text-[26px] font-bold text-[#1c1917] tabular-nums leading-none">
                         {loading ? "—" : m.fmt ? formatPrice(m.value) : Math.round(m.value)}
                       </p>
                       <Sparkline data={m.spark.slice(-30)} color="#0d0b09" w={64} h={24} />
                     </div>
-                    <p className={`text-[11px] mt-2 flex items-center gap-1 ${change >= 0 ? "text-emerald-700" : "text-red-600"}`}>
+                    <p className={`text-[12px] mt-2 flex items-center gap-1 ${change >= 0 ? "text-emerald-700" : "text-red-600"}`}>
                       {change >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       {change >= 0 ? "+" : ""}{change}% vs previous {metricRange} days
                     </p>
@@ -310,8 +358,8 @@ export default function DashboardPage() {
           {/* Trend chart */}
           <div className="bg-white rounded-xl border border-black/[0.05] p-5">
             <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-              <h2 className="text-[14px] font-semibold text-[#1c1917]">Sales trend</h2>
-              <div className="flex items-center gap-4 text-[11px] text-[#6b665e]">
+              <h2 className="text-[15px] font-semibold text-[#1c1917]">Sales trend</h2>
+              <div className="flex items-center gap-4 text-[12px] text-[#6b665e]">
                 <span className="flex items-center gap-1.5"><span className="w-4 h-0.5 bg-[#0d0b09] rounded" /> Sales</span>
                 <span className="flex items-center gap-1.5"><span className="w-4 border-t border-dashed border-[#b8b2a7]" /> Commission</span>
               </div>
@@ -320,7 +368,7 @@ export default function DashboardPage() {
                   <button
                     key={r}
                     onClick={() => setChartRange(r)}
-                    className={`h-6 px-2.5 rounded-full text-[11px] font-medium transition-colors ${chartRange === r ? "bg-white text-[#1c1917] shadow-sm" : "text-[#8a857c] hover:text-[#1c1917]"}`}
+                    className={`h-6 px-2.5 rounded-full text-[12px] font-medium transition-colors ${chartRange === r ? "bg-white text-[#1c1917] shadow-sm" : "text-[#8a857c] hover:text-[#1c1917]"}`}
                   >
                     {r}D
                   </button>
@@ -332,7 +380,7 @@ export default function DashboardPage() {
             ) : daily.length ? (
               <TrendChart data={daily} range={chartRange} />
             ) : (
-              <div className="h-[170px] flex items-center justify-center text-[12px] text-[#a8a29a]">
+              <div className="h-[170px] flex items-center justify-center text-[13px] text-[#a8a29a]">
                 No sales yet — share your store link to get your first order.
               </div>
             )}
@@ -343,9 +391,9 @@ export default function DashboardPage() {
             {/* Top clients */}
             <div className="bg-white rounded-xl border border-black/[0.05] p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-[14px] font-semibold text-[#1c1917]">Top clients</h2>
+                <h2 className="text-[15px] font-semibold text-[#1c1917]">Top clients</h2>
                 <div className="flex items-center gap-2">
-                  <Link href="/dashboard/clients" className="text-[11px] font-medium text-[#6b665e] hover:text-[#1c1917] flex items-center gap-0.5">
+                  <Link href="/dashboard/clients" className="text-[12px] font-medium text-[#6b665e] hover:text-[#1c1917] flex items-center gap-0.5">
                     View all <ArrowUpRight className="w-3 h-3" />
                   </Link>
                   <Link href="/dashboard/clients" aria-label="Add client" className="w-6 h-6 rounded-full bg-[#f0efec] hover:bg-[#e6e4df] flex items-center justify-center text-[#4a463f]">
@@ -359,29 +407,29 @@ export default function DashboardPage() {
                     <div
                       key={c.id}
                       title={`${c.name} — ${c._count?.orders || 0} orders`}
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold text-white border-2 border-white -ml-2 first:ml-0"
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-bold text-white border-2 border-white -ml-2 first:ml-0"
                       style={{ background: ["#0d0b09", "#3f5f8a", "#6b7f3a", "#8a5a44", "#5a4a7a", "#4a7a72"][i % 6], zIndex: 6 - i }}
                     >
                       {c.name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}
                     </div>
                   ))}
                   {clients.length > 6 && (
-                    <div className="w-10 h-10 rounded-full bg-[#f0efec] text-[#6b665e] text-[10px] font-bold flex items-center justify-center border-2 border-white -ml-2">
+                    <div className="w-10 h-10 rounded-full bg-[#f0efec] text-[#6b665e] text-[12px] font-bold flex items-center justify-center border-2 border-white -ml-2">
                       +{clients.length - 6}
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="text-[12px] text-[#a8a29a]">Clients appear here after their first order.</p>
+                <p className="text-[13px] text-[#a8a29a]">Clients appear here after their first order.</p>
               )}
-              <p className="text-[11px] text-[#8a857c] mt-3">{stats?.totalClients ?? 0} total clients</p>
+              <p className="text-[12px] text-[#8a857c] mt-3">{stats?.totalClients ?? 0} total clients</p>
             </div>
 
             {/* Pending items */}
             <div className="bg-white rounded-xl border border-black/[0.05] p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-[14px] font-semibold text-[#1c1917]">Needs attention</h2>
-                <Link href="/dashboard/orders" className="text-[11px] font-medium text-[#6b665e] hover:text-[#1c1917] flex items-center gap-0.5">
+                <h2 className="text-[15px] font-semibold text-[#1c1917]">Needs attention</h2>
+                <Link href="/dashboard/orders" className="text-[12px] font-medium text-[#6b665e] hover:text-[#1c1917] flex items-center gap-0.5">
                   View all <ArrowUpRight className="w-3 h-3" />
                 </Link>
               </div>
@@ -390,27 +438,27 @@ export default function DashboardPage() {
                   <Link href="/dashboard/payouts" className="flex items-center gap-3 rounded-lg bg-[#faf3e4] px-3 py-2.5 hover:bg-[#f5ebd3] transition-colors">
                     <div className="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0"><Clock className="w-4 h-4 text-amber-700" /></div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[12px] font-semibold text-[#1c1917] truncate">Payout of {formatPrice(stats.pendingPayout.amount)} requested</p>
-                      <p className="text-[10px] text-[#8a857c]">Awaiting admin approval</p>
+                      <p className="text-[13px] font-semibold text-[#1c1917] truncate">Payout of {formatPrice(stats.pendingPayout.amount)} requested</p>
+                      <p className="text-[12px] text-[#8a857c]">Awaiting admin approval</p>
                     </div>
-                    <span className="text-[11px] font-semibold text-amber-700">Pending</span>
+                    <span className="text-[12px] font-semibold text-amber-700">Pending</span>
                   </Link>
                 )}
                 {pendingOrders.map((o) => (
                   <Link key={o.id} href="/dashboard/orders" className="flex items-center gap-3 rounded-lg bg-[#f5f4f1] px-3 py-2.5 hover:bg-[#eceae5] transition-colors">
                     <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center shrink-0"><Package className="w-4 h-4 text-sky-700" /></div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[12px] font-semibold text-[#1c1917] truncate">{o.orderNumber} · {o.client?.name || "Customer"}</p>
-                      <p className="text-[10px] text-[#8a857c]">{new Date(o.createdAt).toLocaleDateString()}</p>
+                      <p className="text-[13px] font-semibold text-[#1c1917] truncate">{o.orderNumber} · {o.client?.name || "Customer"}</p>
+                      <p className="text-[12px] text-[#8a857c]">{new Date(o.createdAt).toLocaleDateString()}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-[12px] font-semibold text-[#1c1917] tabular-nums">{formatPrice(o.total)}</p>
+                      <p className="text-[13px] font-semibold text-[#1c1917] tabular-nums">{formatPrice(o.total)}</p>
                       <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${STATUS_STYLE[o.status] || "bg-[#f0efec] text-[#6b665e]"}`}>{o.status}</span>
                     </div>
                   </Link>
                 ))}
                 {!stats?.pendingPayout && pendingOrders.length === 0 && (
-                  <p className="text-[12px] text-[#a8a29a] text-center py-6">All caught up — nothing needs attention.</p>
+                  <p className="text-[13px] text-[#a8a29a] text-center py-6">All caught up — nothing needs attention.</p>
                 )}
               </div>
             </div>
@@ -422,8 +470,8 @@ export default function DashboardPage() {
           {/* Recent activity */}
           <div className="bg-white rounded-xl border border-black/[0.05] p-5">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[14px] font-semibold text-[#1c1917]">Recent activity</h2>
-              <Link href="/dashboard/orders" className="text-[11px] font-medium text-[#6b665e] hover:text-[#1c1917]">30 days</Link>
+              <h2 className="text-[15px] font-semibold text-[#1c1917]">Recent activity</h2>
+              <Link href="/dashboard/orders" className="text-[12px] font-medium text-[#6b665e] hover:text-[#1c1917]">30 days</Link>
             </div>
             {recentOrders.length ? (
               <div className="divide-y divide-black/[0.04]">
@@ -433,26 +481,26 @@ export default function DashboardPage() {
                       <ShoppingBag className="w-3.5 h-3.5 text-[#3f5f8a]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[12px] font-medium text-[#1c1917] truncate">{o.orderNumber}</p>
-                      <p className="text-[10px] text-[#8a857c]">{o.client?.name || "Customer"} · {new Date(o.createdAt).toLocaleDateString()}</p>
+                      <p className="text-[13px] font-medium text-[#1c1917] truncate">{o.orderNumber}</p>
+                      <p className="text-[12px] text-[#8a857c]">{o.client?.name || "Customer"} · {new Date(o.createdAt).toLocaleDateString()}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-[12px] font-semibold text-[#1c1917] tabular-nums">{formatPrice(o.total)}</p>
+                      <p className="text-[13px] font-semibold text-[#1c1917] tabular-nums">{formatPrice(o.total)}</p>
                       <span className={`text-[9px] font-semibold ${o.commission > 0 ? "text-emerald-700" : "text-[#a8a29a]"}`}>+{formatPrice(o.commission)}</span>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-[12px] text-[#a8a29a] py-6 text-center">No orders yet.</p>
+              <p className="text-[13px] text-[#a8a29a] py-6 text-center">No orders yet.</p>
             )}
           </div>
 
           {/* Resources */}
           <div className="bg-white rounded-xl border border-black/[0.05] p-5 flex-1 flex flex-col">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[14px] font-semibold text-[#1c1917]">Resources</h2>
-              <Link href="/dashboard/catalog" className="text-[11px] font-medium text-[#6b665e] hover:text-[#1c1917] flex items-center gap-0.5">
+              <h2 className="text-[15px] font-semibold text-[#1c1917]">Resources</h2>
+              <Link href="/dashboard/catalog" className="text-[12px] font-medium text-[#6b665e] hover:text-[#1c1917] flex items-center gap-0.5">
                 View all <ArrowUpRight className="w-3 h-3" />
               </Link>
             </div>
@@ -461,11 +509,11 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-lg bg-emerald-500/15 flex items-center justify-center"><Wallet className="w-4 h-4 text-emerald-700" /></div>
                   <div>
-                    <p className="text-[12px] font-semibold text-[#1c1917]">Earnings</p>
+                    <p className="text-[13px] font-semibold text-[#1c1917]">Earnings</p>
                     <p className="text-[15px] font-bold text-[#1c1917] tabular-nums">{loading ? "—" : formatPrice(stats?.commissionBalance ?? 0)}</p>
                   </div>
                 </div>
-                <p className="text-[10px] text-emerald-800/70 mt-2 font-medium">Withdraw to MoMo or bank →</p>
+                <p className="text-[12px] text-emerald-800/70 mt-2 font-medium">Withdraw to MoMo or bank →</p>
               </Link>
               <Link
                 href={me?.reseller ? `https://www.intactconnect.com.gh/store/${me.reseller.storeSlug}` : "/dashboard/share"}
@@ -475,18 +523,18 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-lg bg-[#3f5f8a]/15 flex items-center justify-center"><Store className="w-4 h-4 text-[#3f5f8a]" /></div>
                   <div className="min-w-0">
-                    <p className="text-[12px] font-semibold text-[#1c1917] truncate">{me?.reseller?.storeName || "Your storefront"}</p>
-                    <p className="text-[10px] text-[#8a857c] truncate">intactconnect.com.gh/store/{me?.reseller?.storeSlug || "…"}</p>
+                    <p className="text-[13px] font-semibold text-[#1c1917] truncate">{me?.reseller?.storeName || "Your storefront"}</p>
+                    <p className="text-[12px] text-[#8a857c] truncate">intactconnect.com.gh/store/{me?.reseller?.storeSlug || "…"}</p>
                   </div>
                 </div>
-                <p className="text-[10px] text-[#3f5f8a] mt-2 font-medium">Share your store link →</p>
+                <p className="text-[12px] text-[#3f5f8a] mt-2 font-medium">Share your store link →</p>
               </Link>
               <Link href="/dashboard/share" className="block rounded-xl bg-[#faf3e4] p-4 hover:bg-[#f5ebd3] transition-colors">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-lg bg-amber-500/15 flex items-center justify-center"><Share2 className="w-4 h-4 text-amber-700" /></div>
                   <div>
-                    <p className="text-[12px] font-semibold text-[#1c1917]">Refer & earn</p>
-                    <p className="text-[10px] text-[#8a857c]">GH₵25 per reseller you recruit</p>
+                    <p className="text-[13px] font-semibold text-[#1c1917]">Refer & earn</p>
+                    <p className="text-[12px] text-[#8a857c]">GH₵25 per reseller you recruit</p>
                   </div>
                 </div>
               </Link>
@@ -498,14 +546,14 @@ export default function DashboardPage() {
       {/* Mobile-only: leaderboard + top products kept compact */}
       {(analytics?.topProducts?.length ?? 0) > 0 && (
         <div className="mt-4 bg-white rounded-xl border border-black/[0.05] p-5">
-          <h2 className="text-[14px] font-semibold text-[#1c1917] mb-3">Top viewed products · 30d</h2>
+          <h2 className="text-[15px] font-semibold text-[#1c1917] mb-3">Top viewed products · 30d</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {analytics!.topProducts!.slice(0, 3).map((p: any, i: number) => (
               <div key={i} className="flex items-center gap-2.5 rounded-lg bg-[#f5f4f1] px-3 py-2.5">
                 {p.image ? <img src={p.image} alt="" className="w-9 h-9 rounded-lg object-cover" /> : <div className="w-9 h-9 rounded-lg bg-[#e6e4df]" />}
                 <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-medium text-[#1c1917] truncate">{p.name}</p>
-                  <p className="text-[10px] text-[#8a857c]">{p.views} views</p>
+                  <p className="text-[13px] font-medium text-[#1c1917] truncate">{p.name}</p>
+                  <p className="text-[12px] text-[#8a857c]">{p.views} views</p>
                 </div>
               </div>
             ))}

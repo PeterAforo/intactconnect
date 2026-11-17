@@ -10,12 +10,12 @@
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
   --color-info: #3b82f6;
-  --color-surface: #f8fafc;
-  --color-surface-dark: #f1f5f9;
-  --color-text: #1e293b;
-  --color-text-muted: #64748b;
-  --color-text-light: #94a3b8;
-  --color-border: #e2e8f0;
+  --color-surface: #f5f4f1;
+  --color-surface-dark: #eceae5;
+  --color-text: #1c1917;
+  --color-text-muted: #6b665e;
+  --color-text-light: #a8a29a;
+  --color-border: #e6e2da;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
 

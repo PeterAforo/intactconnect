@@ -33,10 +33,10 @@ export default function InvoicesPage() {
   const filtered = filter === "all" ? invoices : invoices.filter(i => i.status === filter);
 
   return (
-    <div className="p-4 lg:p-8">
+    <div className="px-5 sm:px-7 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-text">Invoices</h1>
+          <h1 className="text-[22px] font-bold tracking-tight text-text">Invoices</h1>
           <p className="text-text-muted text-sm">{invoices.length} invoices</p>
         </div>
         <Link href="/dashboard/invoices/new">
@@ -48,7 +48,7 @@ export default function InvoicesPage() {
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {["all", "draft", "sent", "confirmed", "paid", "overdue", "cancelled"].map(s => (
           <button key={s} onClick={() => setFilter(s)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize ${filter === s ? "bg-primary text-white" : "bg-white border border-border text-text-muted hover:bg-surface"}`}>
+            className={`px-3 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap capitalize ${filter === s ? "bg-primary text-white" : "bg-white border border-border text-text-muted hover:bg-surface"}`}>
             {s}
           </button>
         ))}
@@ -72,13 +72,13 @@ export default function InvoicesPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-mono font-bold text-text text-sm">{inv.invoiceNumber}</p>
-                  <p className="text-xs text-text-muted">
+                  <p className="text-[13px] text-text-muted">
                     {inv.client?.name || "No client"} &bull; {inv.items.length} item{inv.items.length !== 1 ? "s" : ""} &bull; {new Date(inv.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-text text-sm">{formatPrice(inv.total)}</p>
-                  <Badge className={`text-xs ${STATUS_COLORS[inv.status] || ""}`}>{inv.status}</Badge>
+                  <Badge className={`text-[13px] ${STATUS_COLORS[inv.status] || ""}`}>{inv.status}</Badge>
                 </div>
               </motion.div>
             </Link>

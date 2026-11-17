@@ -61,10 +61,10 @@ export default function PayoutsPage() {
   };
 
   return (
-    <div className="p-4 lg:p-8">
+    <div className="px-5 sm:px-7 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-text">Payouts</h1>
+          <h1 className="text-[22px] font-bold tracking-tight text-text">Payouts</h1>
           <p className="text-text-muted text-sm">Request withdrawals from your commission balance</p>
         </div>
         <Button onClick={() => setShowRequest(true)} size="sm"><Plus className="w-4 h-4 mr-1" /> Request Payout</Button>
@@ -97,9 +97,9 @@ export default function PayoutsPage() {
                 </div>
                 <div className="flex-1">
                   <p className="font-bold text-text text-sm">{formatPrice(p.amount)}</p>
-                  <p className="text-xs text-text-muted capitalize">{p.method} &bull; {new Date(p.requestedAt).toLocaleDateString()}</p>
+                  <p className="text-[13px] text-text-muted capitalize">{p.method} &bull; {new Date(p.requestedAt).toLocaleDateString()}</p>
                 </div>
-                <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full capitalize ${sc.color}`}>
+                <span className={`inline-flex items-center gap-1 text-[13px] font-medium px-2 py-1 rounded-full capitalize ${sc.color}`}>
                   {sc.icon} {p.status}
                 </span>
               </motion.div>

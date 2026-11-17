@@ -66,10 +66,10 @@ export default function PromotionsPage() {
   const isActive = (p: Promo) => p.active && new Date(p.startDate) <= new Date() && new Date(p.endDate) >= new Date();
 
   return (
-    <div className="p-4 lg:p-8">
+    <div className="px-5 sm:px-7 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-text">Promotions</h1>
+          <h1 className="text-[22px] font-bold tracking-tight text-text">Promotions</h1>
           <p className="text-text-muted text-sm">Create promotions that appear on your store page</p>
         </div>
         <Button onClick={openAdd} size="sm"><Plus className="w-4 h-4 mr-1" /> New Promotion</Button>
@@ -93,11 +93,11 @@ export default function PromotionsPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="font-medium text-text text-sm">{p.title}</p>
-                  <Badge className={`text-[10px] ${isActive(p) ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
+                  <Badge className={`text-[12px] ${isActive(p) ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
                     {isActive(p) ? "Active" : "Inactive"}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-text-muted mt-0.5">
+                <div className="flex items-center gap-3 text-[13px] text-text-muted mt-0.5">
                   {p.discount && <span className="flex items-center gap-1"><Percent className="w-3 h-3" /> {p.discount}% off</span>}
                   {p.code && <span className="flex items-center gap-1"><Tag className="w-3 h-3" /> {p.code}</span>}
                   <span className="flex items-center gap-1">

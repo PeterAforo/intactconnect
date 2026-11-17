@@ -47,7 +47,7 @@ export default function InvoiceDetailPage() {
   if (!inv) return <div className="p-8 text-center text-text-muted">Invoice not found</div>;
 
   return (
-    <div className="p-4 lg:p-8 max-w-2xl mx-auto">
+    <div className="px-5 sm:px-7 py-6 max-w-2xl mx-auto">
       <button onClick={() => router.push("/dashboard/invoices")} className="flex items-center gap-1 text-sm text-text-muted hover:text-text mb-4">
         <ArrowLeft className="w-4 h-4" /> Back to Invoices
       </button>
@@ -60,7 +60,7 @@ export default function InvoiceDetailPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-text font-mono">{inv.invoiceNumber}</h1>
-            <Badge className={`text-xs ${STATUS_COLORS[inv.status] || ""}`}>{inv.status}</Badge>
+            <Badge className={`text-[13px] ${STATUS_COLORS[inv.status] || ""}`}>{inv.status}</Badge>
           </div>
         </div>
         <div className="flex gap-2">
@@ -80,19 +80,19 @@ export default function InvoiceDetailPage() {
       <div className="space-y-4">
         {/* Meta */}
         <div className="bg-white rounded-xl border border-border p-4 grid grid-cols-2 gap-4 text-sm">
-          <div><span className="text-text-muted block text-xs mb-0.5">Client</span>
+          <div><span className="text-text-muted block text-[13px] mb-0.5">Client</span>
             <span className="text-text font-medium flex items-center gap-1"><User className="w-3.5 h-3.5" /> {inv.client?.name || "No client"}</span>
           </div>
-          <div><span className="text-text-muted block text-xs mb-0.5">Created</span>
+          <div><span className="text-text-muted block text-[13px] mb-0.5">Created</span>
             <span className="text-text font-medium flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {new Date(inv.createdAt).toLocaleDateString()}</span>
           </div>
           {inv.dueDate && (
-            <div><span className="text-text-muted block text-xs mb-0.5">Due Date</span>
+            <div><span className="text-text-muted block text-[13px] mb-0.5">Due Date</span>
               <span className="text-text font-medium">{new Date(inv.dueDate).toLocaleDateString()}</span>
             </div>
           )}
           {inv.sentAt && (
-            <div><span className="text-text-muted block text-xs mb-0.5">Sent</span>
+            <div><span className="text-text-muted block text-[13px] mb-0.5">Sent</span>
               <span className="text-text font-medium">{new Date(inv.sentAt).toLocaleDateString()}</span>
             </div>
           )}
@@ -103,10 +103,10 @@ export default function InvoiceDetailPage() {
           <table className="w-full text-sm">
             <thead className="bg-surface">
               <tr>
-                <th className="text-left px-4 py-2.5 text-xs font-medium text-text-muted">Description</th>
-                <th className="text-center px-2 py-2.5 text-xs font-medium text-text-muted w-16">Qty</th>
-                <th className="text-right px-4 py-2.5 text-xs font-medium text-text-muted w-24">Price</th>
-                <th className="text-right px-4 py-2.5 text-xs font-medium text-text-muted w-24">Total</th>
+                <th className="text-left px-4 py-2.5 text-[13px] font-medium text-text-muted">Description</th>
+                <th className="text-center px-2 py-2.5 text-[13px] font-medium text-text-muted w-16">Qty</th>
+                <th className="text-right px-4 py-2.5 text-[13px] font-medium text-text-muted w-24">Price</th>
+                <th className="text-right px-4 py-2.5 text-[13px] font-medium text-text-muted w-24">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -134,7 +134,7 @@ export default function InvoiceDetailPage() {
 
         {inv.notes && (
           <div className="bg-white rounded-xl border border-border p-4">
-            <h3 className="text-xs font-semibold text-text-muted uppercase mb-1">Notes</h3>
+            <h3 className="text-[13px] font-semibold text-text-muted uppercase mb-1">Notes</h3>
             <p className="text-sm text-text">{inv.notes}</p>
           </div>
         )}

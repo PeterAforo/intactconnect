@@ -45,7 +45,7 @@ export default function OrderDetailPage() {
   const sc = STATUS_CONFIG[order.status] || STATUS_CONFIG.pending;
 
   return (
-    <div className="p-4 lg:p-8 max-w-2xl mx-auto">
+    <div className="px-5 sm:px-7 py-6 max-w-2xl mx-auto">
       <button onClick={() => router.push("/dashboard/orders")} className="flex items-center gap-1 text-sm text-text-muted hover:text-text mb-4">
         <ArrowLeft className="w-4 h-4" /> Back to Orders
       </button>
@@ -54,7 +54,7 @@ export default function OrderDetailPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-text font-mono">{order.orderNumber}</h1>
-          <p className="text-xs text-text-muted">{new Date(order.createdAt).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+          <p className="text-[13px] text-text-muted">{new Date(order.createdAt).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
         </div>
         <Badge className={`text-sm px-3 py-1 ${sc.color} flex items-center gap-1`}>
           {sc.icon} {sc.label}
@@ -64,18 +64,18 @@ export default function OrderDetailPage() {
       <div className="space-y-4">
         {/* Items */}
         <div className="bg-white rounded-xl border border-border overflow-hidden">
-          <h3 className="px-4 py-3 text-xs font-semibold text-text-muted uppercase border-b border-border bg-surface">Items</h3>
+          <h3 className="px-4 py-3 text-[13px] font-semibold text-text-muted uppercase border-b border-border bg-surface">Items</h3>
           <div className="divide-y divide-border">
             {order.items.map((item) => (
               <div key={item.id} className="flex items-center gap-3 p-3">
                 {item.product.images[0] && <img src={item.product.images[0].url} alt="" className="w-12 h-12 rounded-lg object-contain bg-surface" />}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-text truncate">{item.product.name}</p>
-                  <p className="text-xs text-text-muted">x{item.quantity} @ {formatPrice(item.price)}</p>
+                  <p className="text-[13px] text-text-muted">x{item.quantity} @ {formatPrice(item.price)}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-sm font-bold text-text">{formatPrice(item.price * item.quantity)}</p>
-                  <p className="text-xs text-success">+{formatPrice(item.commission)}</p>
+                  <p className="text-[13px] text-success">+{formatPrice(item.commission)}</p>
                 </div>
               </div>
             ))}
@@ -94,7 +94,7 @@ export default function OrderDetailPage() {
 
         {/* Customer & Shipping */}
         <div className="bg-white rounded-xl border border-border p-4">
-          <h3 className="text-xs font-semibold text-text-muted uppercase mb-3">Customer & Shipping</h3>
+          <h3 className="text-[13px] font-semibold text-text-muted uppercase mb-3">Customer & Shipping</h3>
           <div className="space-y-2 text-sm">
             {(order.shippingName || order.client?.name) && (
               <p className="flex items-center gap-2 text-text"><User className="w-4 h-4 text-text-muted" /> {order.shippingName || order.client?.name}</p>

@@ -41,27 +41,27 @@ function SidebarContent({ data, pathname, onNavigate, onLogout }: {
   return (
     <div className="flex flex-col h-full">
       {/* Wordmark */}
-      <div className="px-4 pt-5 pb-4">
+      <div className="px-5 pt-6 pb-5">
         <Link href="/dashboard" onClick={onNavigate}>
-          <Image src="/img/logo.png" alt="IntactConnect" width={140} height={40} className="h-9 w-auto" />
+          <Image src="/img/logo.png" alt="IntactConnect" width={150} height={42} className="h-10 w-auto" />
         </Link>
       </div>
 
       {/* Identity */}
-      <div className="flex flex-col items-center px-3 pb-4">
+      <div className="flex flex-col items-center px-4 pb-5">
         {data.reseller?.picture ? (
-          <img src={data.reseller.picture} alt="" className="w-12 h-12 rounded-full object-cover ring-2 ring-black/[0.06]" />
+          <img src={data.reseller.picture} alt="" className="w-14 h-14 rounded-full object-cover ring-2 ring-black/[0.06]" />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-[#0d0b09] text-white flex items-center justify-center text-sm font-bold">{initials}</div>
+          <div className="w-14 h-14 rounded-full bg-[#0d0b09] text-white flex items-center justify-center text-base font-bold">{initials}</div>
         )}
-        <p className="mt-2.5 text-[13px] font-semibold text-[#1c1917] text-center truncate w-full">{data.reseller?.storeName || data.user.name}</p>
-        <p className="text-[11px] text-[#8a857c]">Reseller</p>
+        <p className="mt-3 text-sm font-semibold text-[#1c1917] text-center truncate w-full">{data.reseller?.storeName || data.user.name}</p>
+        <p className="text-xs text-[#8a857c] mt-0.5">Reseller</p>
       </div>
 
-      <div className="mx-4 border-t border-black/[0.06]" />
+      <div className="mx-5 border-t border-black/[0.06]" />
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {NAV_ITEMS.map((item) => {
           const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
           return (
@@ -69,9 +69,9 @@ function SidebarContent({ data, pathname, onNavigate, onLogout }: {
               key={item.href}
               href={item.href}
               onClick={onNavigate}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition-colors ${active ? "bg-white text-[#1c1917] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.05)]" : "text-[#8a857c] hover:text-[#1c1917] hover:bg-black/[0.03]"}`}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-colors ${active ? "bg-white text-[#1c1917] font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.07)]" : "text-[#6b665e] hover:text-[#1c1917] hover:bg-black/[0.03]"}`}
             >
-              <item.icon className="w-4 h-4 shrink-0" />
+              <item.icon className="w-[18px] h-[18px] shrink-0" />
               {item.label}
             </Link>
           );
@@ -79,7 +79,7 @@ function SidebarContent({ data, pathname, onNavigate, onLogout }: {
       </nav>
 
       {/* Lower group */}
-      <div className="px-2.5 pb-2 space-y-0.5">
+      <div className="px-3 pb-3 space-y-1">
         <div className="mx-1.5 border-t border-black/[0.06] mb-2" />
         {BOTTOM_ITEMS.map((item) => (
           <Link
@@ -87,17 +87,17 @@ function SidebarContent({ data, pathname, onNavigate, onLogout }: {
             href={item.href}
             target={item.external ? "_blank" : undefined}
             onClick={onNavigate}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] text-[#8a857c] hover:text-[#1c1917] hover:bg-black/[0.03] transition-colors"
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-[#6b665e] hover:text-[#1c1917] hover:bg-black/[0.03] transition-colors"
           >
-            <item.icon className="w-4 h-4 shrink-0" />
+            <item.icon className="w-[18px] h-[18px] shrink-0" />
             {item.label}
           </Link>
         ))}
         <button
           onClick={onLogout}
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] text-[#b42318] hover:bg-red-50 transition-colors w-full text-left"
+          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-[#b42318] hover:bg-red-50 transition-colors w-full text-left"
         >
-          <LogOut className="w-4 h-4 shrink-0" />
+          <LogOut className="w-[18px] h-[18px] shrink-0" />
           Sign out
         </button>
       </div>
@@ -138,8 +138,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-[#efede8] p-1.5 sm:p-2.5">
-      <div className="flex h-[calc(100vh-0.75rem)] sm:h-[calc(100vh-1.25rem)] rounded-2xl overflow-hidden bg-white shadow-[0_10px_40px_-12px_rgba(13,11,9,0.15)]">
+    <div className="h-[100dvh] w-full bg-white flex overflow-hidden">
+      <div className="flex flex-1 min-h-0 min-w-0">
         {/* Mobile header */}
         <header className="lg:hidden fixed top-0 inset-x-0 z-50 bg-white border-b border-black/[0.06] h-14 flex items-center justify-between px-4">
           <button onClick={() => setSidebarOpen(true)} aria-label="Open menu">
@@ -161,7 +161,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </aside>
 
         {/* Desktop sidebar */}
-        <aside className="hidden lg:flex w-[168px] xl:w-[184px] shrink-0 bg-[#faf9f6] border-r border-black/[0.06] flex-col">
+        <aside className="hidden lg:flex w-56 xl:w-64 shrink-0 bg-[#faf9f6] border-r border-black/[0.06] flex-col">
           <SidebarContent data={data!} pathname={pathname} onLogout={handleLogout} />
         </aside>
 

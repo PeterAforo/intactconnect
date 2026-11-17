@@ -83,14 +83,14 @@ export default function OnboardingPage() {
           <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Store className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-text">Customize Your Store</h1>
+          <h1 className="text-[22px] font-bold tracking-tight text-text">Customize Your Store</h1>
           <p className="text-text-muted text-sm mt-1">Choose the categories and products you want to sell.</p>
         </div>
 
         <div className="flex justify-center gap-2 mb-8">
           {STEPS.map((s, i) => (
             <div key={s} className={`flex items-center gap-2 text-sm ${i === step ? "text-primary font-medium" : "text-text-muted"}`}>
-              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${i === step ? "bg-primary text-white" : i < step ? "bg-success text-white" : "bg-surface border border-border"}`}>
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[13px] ${i === step ? "bg-primary text-white" : i < step ? "bg-success text-white" : "bg-surface border border-border"}`}>
                 {i < step ? <Check className="w-3 h-3" /> : i + 1}
               </span>
               {s}
@@ -159,7 +159,7 @@ export default function OnboardingPage() {
                     <div className="aspect-square relative bg-surface rounded-lg mb-2 overflow-hidden">
                       {p.image ? <Image src={p.image} alt={p.name} fill className="object-contain p-2" /> : <Package className="w-8 h-8 text-text-muted m-auto" />}
                     </div>
-                    <p className="text-xs text-text-muted">{p.category.name}</p>
+                    <p className="text-[13px] text-text-muted">{p.category.name}</p>
                     <p className="text-sm font-medium text-text line-clamp-2 mb-1">{p.name}</p>
                     <p className="text-sm font-bold text-primary">GH₵{p.price.toLocaleString()}</p>
                   </div>
@@ -183,7 +183,7 @@ export default function OnboardingPage() {
                     placeholder="Genuine products, delivered fast."
                     maxLength={120}
                   />
-                  <p className="text-[11px] text-text-muted mt-1">Shows under your store name on your storefront.</p>
+                  <p className="text-[12px] text-text-muted mt-1">Shows under your store name on your storefront.</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-text block mb-2">Theme color</label>
@@ -203,9 +203,9 @@ export default function OnboardingPage() {
                 <div className="border border-border rounded-xl overflow-hidden">
                   <div className="px-4 py-3 text-white" style={{ backgroundColor: storeThemeColor }}>
                     <p className="font-bold text-sm">Your Store Name</p>
-                    <p className="text-white/70 text-xs">{storeTagline || "Your tagline will show here"}</p>
+                    <p className="text-white/70 text-[13px]">{storeTagline || "Your tagline will show here"}</p>
                   </div>
-                  <div className="px-4 py-2.5 bg-surface flex items-center gap-2 text-xs text-text-muted">
+                  <div className="px-4 py-2.5 bg-surface flex items-center gap-2 text-[13px] text-text-muted">
                     <Store className="w-3.5 h-3.5" /> storefront preview
                   </div>
                 </div>
@@ -226,7 +226,7 @@ export default function OnboardingPage() {
               </p>
               {storeSlug && (
                 <div className="bg-surface rounded-lg px-4 py-2.5 mb-5 inline-flex items-center gap-2">
-                  <p className="text-xs font-mono text-text truncate">intactconnect.com.gh/store/{storeSlug}</p>
+                  <p className="text-[13px] font-mono text-text truncate">intactconnect.com.gh/store/{storeSlug}</p>
                 </div>
               )}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">

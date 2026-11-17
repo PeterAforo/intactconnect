@@ -9,7 +9,7 @@ import type { Client } from "../_types";
 function Sec({ t, children }: { t: string; children: React.ReactNode }) {
   return (
     <div className="bg-white rounded-xl border border-border p-4">
-      <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wide mb-3">{t}</h3>
+      <h3 className="text-[13px] font-semibold text-text-muted uppercase tracking-wide mb-3">{t}</h3>
       <div className="space-y-2">{children}</div>
     </div>
   );
@@ -44,7 +44,7 @@ export default function ClientDetailPage() {
   const canDelete = c._count.orders === 0 && c._count.invoices === 0;
 
   return (
-    <div className="p-4 lg:p-8 max-w-2xl mx-auto">
+    <div className="px-5 sm:px-7 py-6 max-w-2xl mx-auto">
       <button onClick={() => router.push("/dashboard/clients")} className="flex items-center gap-1 text-sm text-text-muted hover:text-text mb-4">
         <ArrowLeft className="w-4 h-4" /> Back to Clients
       </button>
@@ -56,7 +56,7 @@ export default function ClientDetailPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-text">{c.name}</h1>
-            <Badge className="text-[10px]">{c.clientType}</Badge>
+            <Badge className="text-[11px]">{c.clientType}</Badge>
           </div>
         </div>
         <div className="flex gap-2">
@@ -87,7 +87,7 @@ export default function ClientDetailPage() {
             <>
               <IR l="GPS" v={`${c.latitude.toFixed(6)}, ${c.longitude.toFixed(6)}`} />
               <a href={`https://www.google.com/maps?q=${c.latitude},${c.longitude}`} target="_blank" rel="noreferrer"
-                className="text-primary text-xs hover:underline inline-flex items-center gap-1 mt-1">
+                className="text-primary text-[13px] hover:underline inline-flex items-center gap-1 mt-1">
                 <MapPin className="w-3 h-3" /> Open in Google Maps
               </a>
             </>

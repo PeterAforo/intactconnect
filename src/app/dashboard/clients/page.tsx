@@ -29,10 +29,10 @@ export default function ClientsPage() {
   });
 
   return (
-    <div className="p-4 lg:p-8">
+    <div className="px-5 sm:px-7 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-text">Clients</h1>
+          <h1 className="text-[22px] font-bold tracking-tight text-text">Clients</h1>
           <p className="text-text-muted text-sm">{clients.length} total</p>
         </div>
         <Link href="/dashboard/clients/new">
@@ -50,7 +50,7 @@ export default function ClientsPage() {
           <div className="flex gap-2">
             {(["all", "individual", "company"] as const).map(t => (
               <button key={t} onClick={() => setFilterType(t)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterType === t ? "bg-primary text-white" : "bg-white border border-border text-text-muted hover:text-text"}`}>
+                className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors ${filterType === t ? "bg-primary text-white" : "bg-white border border-border text-text-muted hover:text-text"}`}>
                 {t === "all" ? "All" : t === "individual" ? "Individual" : "Company"}
               </button>
             ))}
@@ -78,15 +78,15 @@ export default function ClientsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-text text-sm truncate">{c.name}</p>
-                    <Badge className={`text-[10px] ${c.clientType === "company" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>{c.clientType}</Badge>
+                    <Badge className={`text-[12px] ${c.clientType === "company" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>{c.clientType}</Badge>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-text-muted mt-0.5">
+                  <div className="flex items-center gap-3 text-[13px] text-text-muted mt-0.5">
                     {c.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" /> {c.phone}</span>}
                     {c.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3" /> {c.email}</span>}
                     {c.city && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {c.city}{c.region ? `, ${c.region}` : ""}</span>}
                   </div>
                 </div>
-                <div className="text-right text-xs text-text-muted shrink-0">
+                <div className="text-right text-[13px] text-text-muted shrink-0">
                   <p className="flex items-center gap-1 justify-end"><ShoppingCart className="w-3 h-3" /> {c._count.orders}</p>
                   <p className="flex items-center gap-1 justify-end"><FileText className="w-3 h-3" /> {c._count.invoices}</p>
                 </div>

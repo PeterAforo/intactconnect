@@ -50,11 +50,11 @@ export default function NewInvoicePage() {
   };
 
   return (
-    <div className="p-4 lg:p-8 max-w-2xl mx-auto">
+    <div className="px-5 sm:px-7 py-6 max-w-2xl mx-auto">
       <button onClick={() => router.push("/dashboard/invoices")} className="flex items-center gap-1 text-sm text-text-muted hover:text-text mb-4">
         <ArrowLeft className="w-4 h-4" /> Back to Invoices
       </button>
-      <h1 className="text-2xl font-bold text-text mb-6">Create Invoice</h1>
+      <h1 className="text-[22px] font-bold tracking-tight text-text mb-6">Create Invoice</h1>
 
       <div className="space-y-5">
         {/* Client */}
@@ -80,10 +80,10 @@ export default function NewInvoicePage() {
               <table className="w-full text-sm">
                 <thead className="bg-surface">
                   <tr>
-                    <th className="text-left px-3 py-2 text-xs font-medium text-text-muted">Product</th>
-                    <th className="text-center px-2 py-2 text-xs font-medium text-text-muted w-20">Qty</th>
-                    <th className="text-right px-3 py-2 text-xs font-medium text-text-muted w-24">Price</th>
-                    <th className="text-right px-3 py-2 text-xs font-medium text-text-muted w-24">Total</th>
+                    <th className="text-left px-3 py-2 text-[13px] font-medium text-text-muted">Product</th>
+                    <th className="text-center px-2 py-2 text-[13px] font-medium text-text-muted w-20">Qty</th>
+                    <th className="text-right px-3 py-2 text-[13px] font-medium text-text-muted w-24">Price</th>
+                    <th className="text-right px-3 py-2 text-[13px] font-medium text-text-muted w-24">Total</th>
                     <th className="w-10"></th>
                   </tr>
                 </thead>
