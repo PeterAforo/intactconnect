@@ -197,7 +197,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="px-5 sm:px-7 py-6 max-w-[1400px]">
+    <div className="px-5 sm:px-7 py-6 w-full">
       {/* ── Header ── */}
       <div className="flex items-center justify-between gap-4 pb-4 border-b border-black/[0.05]">
         <div>
