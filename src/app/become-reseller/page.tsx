@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useState, useRef, useEffect, Suspense } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Upload, Loader2, CheckCircle, ArrowLeft, Camera, IdCard, Store } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Upload, Loader2, CheckCircle, Camera, IdCard } from "lucide-react";
+import AuthShell from "@/components/auth/AuthShell";
 
 const ID_TYPES = [
   { value: "ghana_card", label: "Ghana Card" },
@@ -16,6 +13,14 @@ const ID_TYPES = [
   { value: "nhis", label: "NHIS Card" },
   { value: "driver_license", label: "Driver's License" },
 ];
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+const inputCls =
+  "w-full h-10 px-3 rounded-lg border border-[#e2e0da] bg-white text-sm text-[#1c1917] placeholder:text-[#a8a29a] focus:outline-none focus:ring-2 focus:ring-[#0d0b09]/15 focus:border-[#0d0b09]/40 transition";
+
+const labelCls = "text-[13px] font-medium text-[#1c1917] block mb-1.5";
+const sectionCls = "text-[11px] font-semibold uppercase tracking-[0.08em] text-[#6b665e] mb-3";
 
 function BecomeResellerForm() {
   const router = useRouter();
@@ -109,157 +114,160 @@ function BecomeResellerForm() {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
+      <AuthShell switchHref="/" switchLabel="Home" wide>
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-7 h-7 animate-spin text-[#0d0b09]/40" />
+        </div>
+      </AuthShell>
     );
   }
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface px-4">
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl max-w-md w-full text-center border border-border shadow-lg p-8">
-          <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-success" />
+      <AuthShell switchHref="/" switchLabel="Home" wide>
+        <motion.div initial={{ scale: 0.96, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4, ease: EASE }} className="text-center py-10">
+          <div className="w-14 h-14 rounded-full bg-[#e8f5e9] flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-7 h-7 text-[#2e7d32]" />
           </div>
-          <h2 className="text-2xl font-bold text-text mb-2">Application Submitted!</h2>
-          <p className="text-text-muted text-sm mb-6">
+          <h2 className="text-[20px] font-bold text-[#1c1917] tracking-tight mb-2">Application submitted</h2>
+          <p className="text-[13px] text-[#6b665e] leading-relaxed mb-6">
             Our team will review your reseller application within 24 hours. We&apos;ll email you once approved.
           </p>
-          <Link href="/"><Button className="rounded-full px-8">Back to Home</Button></Link>
+          <a
+            href="/"
+            className="inline-flex items-center justify-center h-10 px-6 rounded-lg bg-[#0d0b09] text-white text-[13px] font-semibold hover:bg-[#2a251d] transition-colors"
+          >
+            Back to home
+          </a>
         </motion.div>
-      </div>
+      </AuthShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        <Link href="/" className="inline-flex items-center gap-1.5 text-text-muted hover:text-text text-sm mb-5">
-          <ArrowLeft className="w-4 h-4" /> Back to Home
-        </Link>
+    <AuthShell switchHref="/" switchLabel="Home" wide>
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }}>
+        <h1 className="text-[22px] font-bold text-[#1c1917] tracking-tight leading-snug">Become a reseller</h1>
+        <p className="text-[13px] text-[#6b665e] mt-1 mb-6">Complete your store &amp; ID details — your account info carries over.</p>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
-              <Store className="w-5 h-5 text-primary" />
-            </div>
+        {error && (
+          <div role="alert" className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2.5 mb-4 text-[13px]">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Store Info */}
+          <div>
+            <h3 className={sectionCls}>Your store</h3>
             <div>
-              <h1 className="text-xl font-bold text-text">Become a Reseller</h1>
-              <p className="text-text-muted text-sm">Complete your store & ID details — your account info carries over.</p>
+              <label className={labelCls}>Store name *</label>
+              <input value={form.storeName} onChange={(e) => update("storeName", e.target.value)} placeholder="My Tech Store" className={`${inputCls} ${errors.storeName ? "border-red-300" : ""}`} />
+              {errors.storeName && <p className="text-red-600 text-xs mt-1">{errors.storeName}</p>}
             </div>
           </div>
 
-          {error && <div className="bg-danger/10 text-danger rounded-lg px-4 py-3 mt-4 text-sm">{error}</div>}
-
-          <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-            {/* Store Info */}
-            <div>
-              <h3 className="font-semibold text-text mb-3 text-sm uppercase tracking-wide">Your Store</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="text-sm font-medium text-text block mb-1">Store Name *</label>
-                  <Input value={form.storeName} onChange={(e) => update("storeName", e.target.value)} placeholder="My Tech Store" className={errors.storeName ? "border-danger" : ""} />
-                  {errors.storeName && <p className="text-danger text-xs mt-1">{errors.storeName}</p>}
-                </div>
+          {/* Profile Photo */}
+          <div>
+            <label className={labelCls}>Profile photo *</label>
+            <div className="flex items-center gap-4">
+              <div onClick={() => pictureRef.current?.click()} className={`w-16 h-16 rounded-full border-2 border-dashed ${errors.picture ? "border-red-300" : "border-[#e2e0da]"} bg-[#fbfaf8] flex items-center justify-center overflow-hidden cursor-pointer hover:border-[#0d0b09]/40 transition-colors`}>
+                {picture ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={picture} alt="Profile" className="w-full h-full object-cover" />
+                ) : uploading === "picture" ? (
+                  <Loader2 className="w-5 h-5 text-[#a8a29a] animate-spin" />
+                ) : (
+                  <Camera className="w-5 h-5 text-[#a8a29a]" />
+                )}
+              </div>
+              <div>
+                <button type="button" onClick={() => pictureRef.current?.click()} disabled={uploading === "picture"} className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-[#e2e0da] text-[13px] font-medium text-[#3a362f] hover:bg-[#f5f4f1] transition-colors disabled:opacity-60">
+                  <Upload className="w-3.5 h-3.5" /> Upload photo
+                </button>
+                {errors.picture && <p className="text-red-600 text-xs mt-1">{errors.picture}</p>}
               </div>
             </div>
+            <input ref={pictureRef} type="file" accept="image/*" className="hidden" onChange={handlePictureUpload} />
+          </div>
 
-            {/* Profile Photo */}
-            <div>
-              <label className="text-sm font-medium text-text block mb-2">Profile Photo *</label>
-              <div className="flex items-center gap-4">
-                <div onClick={() => pictureRef.current?.click()} className={`w-20 h-20 rounded-full border-2 border-dashed ${errors.picture ? "border-danger" : "border-border"} flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary transition-colors`}>
-                  {picture ? (
-                    <img src={picture} alt="Profile" className="w-full h-full object-cover" />
-                  ) : uploading === "picture" ? (
-                    <Loader2 className="w-6 h-6 text-text-muted animate-spin" />
-                  ) : (
-                    <Camera className="w-6 h-6 text-text-muted" />
-                  )}
-                </div>
-                <div>
-                  <Button type="button" variant="outline" size="sm" onClick={() => pictureRef.current?.click()} disabled={uploading === "picture"}>
-                    <Upload className="w-4 h-4 mr-1" /> Upload Photo
-                  </Button>
-                  {errors.picture && <p className="text-danger text-xs mt-1">{errors.picture}</p>}
-                </div>
+          {/* National ID */}
+          <div>
+            <h3 className={sectionCls}>National ID verification</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label className={labelCls}>ID type *</label>
+                <select value={form.nationalIdType} onChange={(e) => update("nationalIdType", e.target.value)} className={inputCls}>
+                  {ID_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                </select>
               </div>
-              <input ref={pictureRef} type="file" accept="image/*" className="hidden" onChange={handlePictureUpload} />
-            </div>
-
-            {/* National ID */}
-            <div>
-              <h3 className="font-semibold text-text mb-3 text-sm uppercase tracking-wide">National ID Verification</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-text block mb-1">ID Type *</label>
-                  <select value={form.nationalIdType} onChange={(e) => update("nationalIdType", e.target.value)} className="w-full h-10 rounded-lg border border-border bg-white px-3 text-sm">
-                    {ID_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-text block mb-1">ID Number *</label>
-                  <Input value={form.nationalIdNumber} onChange={(e) => update("nationalIdNumber", e.target.value)} placeholder="GHA-XXXXXXXXX-X" className={errors.nationalIdNumber ? "border-danger" : ""} />
-                  {errors.nationalIdNumber && <p className="text-danger text-xs mt-1">{errors.nationalIdNumber}</p>}
-                </div>
-              </div>
-              <div className="mt-3">
-                <label className="text-sm font-medium text-text block mb-2">Upload ID Image *</label>
-                <div onClick={() => idRef.current?.click()} className={`border-2 border-dashed ${errors.nationalIdImage ? "border-danger" : "border-border"} rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-colors`}>
-                  {nationalIdImage ? (
-                    <img src={nationalIdImage} alt="ID" className="max-h-32 mx-auto rounded-lg" />
-                  ) : uploading === "id" ? (
-                    <Loader2 className="w-8 h-8 text-text-muted animate-spin mx-auto" />
-                  ) : (
-                    <>
-                      <IdCard className="w-8 h-8 text-text-muted mx-auto mb-2" />
-                      <p className="text-text-muted text-sm">Click to upload your ID</p>
-                    </>
-                  )}
-                </div>
-                {errors.nationalIdImage && <p className="text-danger text-xs mt-1">{errors.nationalIdImage}</p>}
-              </div>
-              <input ref={idRef} type="file" accept="image/*" className="hidden" onChange={handleIdUpload} />
-            </div>
-
-            {/* Payout Info */}
-            <div>
-              <h3 className="font-semibold text-text mb-3 text-sm uppercase tracking-wide">Payout Details (optional)</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-text block mb-1">MoMo Provider</label>
-                  <select value={form.momoProvider} onChange={(e) => update("momoProvider", e.target.value)} className="w-full h-10 rounded-lg border border-border bg-white px-3 text-sm">
-                    <option value="">Select</option>
-                    <option value="mtn">MTN</option>
-                    <option value="vodafone">Vodafone</option>
-                    <option value="airteltigo">AirtelTigo</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-text block mb-1">MoMo Number</label>
-                  <Input value={form.momoNumber} onChange={(e) => update("momoNumber", e.target.value)} placeholder="0XX XXX XXXX" />
-                </div>
+              <div>
+                <label className={labelCls}>ID number *</label>
+                <input value={form.nationalIdNumber} onChange={(e) => update("nationalIdNumber", e.target.value)} placeholder="GHA-XXXXXXXXX-X" className={`${inputCls} ${errors.nationalIdNumber ? "border-red-300" : ""}`} />
+                {errors.nationalIdNumber && <p className="text-red-600 text-xs mt-1">{errors.nationalIdNumber}</p>}
               </div>
             </div>
+            <div className="mt-3.5">
+              <label className={labelCls}>Upload ID image *</label>
+              <div onClick={() => idRef.current?.click()} className={`border-2 border-dashed ${errors.nationalIdImage ? "border-red-300" : "border-[#e2e0da]"} rounded-lg p-5 bg-[#fbfaf8] text-center cursor-pointer hover:border-[#0d0b09]/40 transition-colors`}>
+                {nationalIdImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={nationalIdImage} alt="ID" className="max-h-32 mx-auto rounded-lg" />
+                ) : uploading === "id" ? (
+                  <Loader2 className="w-6 h-6 text-[#a8a29a] animate-spin mx-auto" />
+                ) : (
+                  <>
+                    <IdCard className="w-6 h-6 text-[#a8a29a] mx-auto mb-1.5" />
+                    <p className="text-[#6b665e] text-[13px]">Click to upload your ID</p>
+                  </>
+                )}
+              </div>
+              {errors.nationalIdImage && <p className="text-red-600 text-xs mt-1">{errors.nationalIdImage}</p>}
+            </div>
+            <input ref={idRef} type="file" accept="image/*" className="hidden" onChange={handleIdUpload} />
+          </div>
 
-            <Button type="submit" className="w-full rounded-full h-12 text-base" disabled={loading}>
-              {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-              Submit Application
-            </Button>
-          </form>
-        </motion.div>
-      </div>
-    </div>
+          {/* Payout Info */}
+          <div>
+            <h3 className={sectionCls}>Payout details <span className="normal-case font-normal">(optional)</span></h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label className={labelCls}>MoMo provider</label>
+                <select value={form.momoProvider} onChange={(e) => update("momoProvider", e.target.value)} className={inputCls}>
+                  <option value="">Select</option>
+                  <option value="mtn">MTN</option>
+                  <option value="vodafone">Vodafone</option>
+                  <option value="airteltigo">AirtelTigo</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>MoMo number</label>
+                <input value={form.momoNumber} onChange={(e) => update("momoNumber", e.target.value)} placeholder="0XX XXX XXXX" className={inputCls} />
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full h-11 rounded-lg bg-[#0d0b09] text-white text-[14px] font-semibold flex items-center justify-center gap-2 hover:bg-[#2a251d] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit application"}
+          </button>
+        </form>
+      </motion.div>
+    </AuthShell>
   );
 }
 
 export default function BecomeResellerPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
+      <AuthShell switchHref="/" switchLabel="Home" wide>
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-7 h-7 animate-spin text-[#0d0b09]/40" />
+        </div>
+      </AuthShell>
     }>
       <BecomeResellerForm />
     </Suspense>

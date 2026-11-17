@@ -99,10 +99,12 @@ export default function AuthShell({
   children,
   switchHref,
   switchLabel,
+  wide = false,
 }: {
   children: React.ReactNode;
   switchHref: string;
   switchLabel: string;
+  wide?: boolean;
 }) {
   return (
     <div className="h-[100dvh] w-full bg-white flex flex-col md:flex-row overflow-hidden">
@@ -134,7 +136,7 @@ export default function AuthShell({
           </div>
 
           <div className="flex-1 min-h-0 overflow-y-auto flex items-center justify-center px-5 sm:px-8 py-10">
-            <div className="w-[72%] max-w-[300px] min-w-0">{children}</div>
+            <div className={wide ? "w-full sm:w-[88%] sm:max-w-[480px] min-w-0" : "w-[72%] max-w-[300px] min-w-0"}>{children}</div>
           </div>
         </div>
     </div>

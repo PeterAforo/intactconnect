@@ -3,7 +3,7 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import AuthShell from "@/components/auth/AuthShell";
 
 function VerifyContent() {
   const searchParams = useSearchParams();
@@ -36,41 +36,53 @@ function VerifyContent() {
   }, [token, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface px-4">
-      <div className="bg-white rounded-2xl border border-border p-8 max-w-md w-full text-center shadow-lg">
+    <AuthShell switchHref="/login" switchLabel="Log in">
+      <div className="text-center py-10">
         {status === "loading" && (
           <>
-            <Loader2 className="w-12 h-12 text-primary mx-auto mb-4 animate-spin" />
-            <h2 className="text-xl font-bold text-text mb-2">Verifying Email...</h2>
-            <p className="text-text-muted text-sm">Please wait while we verify your email address.</p>
+            <Loader2 className="w-10 h-10 text-[#0d0b09]/30 mx-auto mb-4 animate-spin" />
+            <h2 className="text-[20px] font-bold text-[#1c1917] tracking-tight mb-2">Verifying email…</h2>
+            <p className="text-[13px] text-[#6b665e]">Please wait while we verify your email address.</p>
           </>
         )}
         {status === "success" && (
           <>
-            <CheckCircle className="w-12 h-12 text-success mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-text mb-2">Email Verified!</h2>
-            <p className="text-text-muted text-sm">{message}</p>
+            <div className="w-14 h-14 rounded-full bg-[#e8f5e9] flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-7 h-7 text-[#2e7d32]" />
+            </div>
+            <h2 className="text-[20px] font-bold text-[#1c1917] tracking-tight mb-2">Email verified</h2>
+            <p className="text-[13px] text-[#6b665e] leading-relaxed">{message}</p>
+            <p className="text-[11px] text-[#a8a29a] mt-3">Redirecting to login…</p>
           </>
         )}
         {status === "error" && (
           <>
-            <XCircle className="w-12 h-12 text-danger mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-text mb-2">Verification Failed</h2>
-            <p className="text-text-muted text-sm mb-4">{message}</p>
-            <Button onClick={() => router.push("/login")} variant="outline">Go to Login</Button>
+            <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+              <XCircle className="w-7 h-7 text-red-600" />
+            </div>
+            <h2 className="text-[20px] font-bold text-[#1c1917] tracking-tight mb-2">Verification failed</h2>
+            <p className="text-[13px] text-[#6b665e] leading-relaxed mb-5">{message}</p>
+            <a
+              href="/login"
+              className="inline-flex items-center justify-center h-10 px-6 rounded-lg border border-[#e2e0da] text-[13px] font-medium text-[#3a362f] hover:bg-[#f5f4f1] transition-colors"
+            >
+              Go to login
+            </a>
           </>
         )}
       </div>
-    </div>
+    </AuthShell>
   );
 }
 
 export default function VerifyEmailPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
+      <AuthShell switchHref="/login" switchLabel="Log in">
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-7 h-7 animate-spin text-[#0d0b09]/40" />
+        </div>
+      </AuthShell>
     }>
       <VerifyContent />
     </Suspense>
