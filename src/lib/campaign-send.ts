@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { sendEmail, emailLayout } from "@/lib/email";
 import { unsubscribeToken } from "@/lib/unsubscribe";
+import { trackToken } from "@/lib/track";
 
 const MERGE_KEYS = ["name", "business", "store", "link", "agent", "area", "phone", "email"];
 
@@ -104,7 +105,13 @@ export async function sendCampaign(campaignId: string): Promise<SendResult> {
       const subject = mergeFields(campaign.subject || campaign.name, vars);
       const text = mergeFields(campaign.body, vars);
       const unsub = `${appUrl}/api/unsubscribe?p=${p.id}&e=${encodeURIComponent(p.email || "")}&t=${unsubscribeToken(p.id, p.email || "")}`;
-      const html = emailLayout(campaign.name, `${text.replace(/\n/g, "<br/>")}${productBlock}<p style="font-size:11px;color:#999;margin-top:24px">You received this because a business you may be interested in shared IntactConnect with you. <a href="${unsub}" style="color:#999">Unsubscribe</a></p>`);
+      const t = trackToken(r.id);
+      const trackClick = (url: string) =>
+        `${appUrl}/api/track/click?id=${r.id}&t=${t}&u=${encodeURIComponent(url)}`;
+      let bodyHtml = `${text.replace(/\n/g, "<br/>")}${productBlock}<p style="font-size:11px;color:#999;margin-top:24px">You received this because a business you may be interested in shared IntactConnect with you. <a href="${unsub}" style="color:#999">Unsubscribe</a></p>`;
+      bodyHtml = bodyHtml.replace(/href="(https?:\/\/[^"]+)"/g, (_m, url) => `href="${trackClick(url)}"`);
+      bodyHtml += `<img src="${appUrl}/api/track/open?id=${r.id}&t=${t}" width="1" height="1" alt="" style="display:none" />`;
+      const html = emailLayout(campaign.name, bodyHtml);
       try {
         await sendEmail(r.destination, subject, html);
         await prisma.campaignRecipient.update({ where: { id: r.id }, data: { status: "sent", sentAt: new Date() } });
