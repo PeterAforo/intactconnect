@@ -74,7 +74,7 @@ export default function SharePage() {
 
       <div className="grid md:grid-cols-2 gap-4">
         {/* Store link card */}
-        <div className="bg-white rounded-2xl border border-border p-5">
+        <div className="bg-white rounded-xl border border-border p-5">
           <div className="flex items-center gap-2 mb-3">
             <Store className="w-4 h-4 text-primary" />
             <h2 className="font-semibold text-text">Your store link</h2>
@@ -98,7 +98,7 @@ export default function SharePage() {
         </div>
 
         {/* QR card */}
-        <div className="bg-white rounded-2xl border border-border p-5">
+        <div className="bg-white rounded-xl border border-border p-5">
           <div className="flex items-center gap-2 mb-3">
             <QrCode className="w-4 h-4 text-primary" />
             <h2 className="font-semibold text-text">Store QR code</h2>
@@ -117,7 +117,7 @@ export default function SharePage() {
         </div>
 
         {/* Captions card */}
-        <div className="bg-white rounded-2xl border border-border p-5">
+        <div className="bg-white rounded-xl border border-border p-5">
           <div className="flex items-center gap-2 mb-3">
             <MessageCircle className="w-4 h-4 text-primary" />
             <h2 className="font-semibold text-text">Ready-made captions</h2>
@@ -140,7 +140,7 @@ export default function SharePage() {
         </div>
 
         {/* Referral card */}
-        <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-5 text-white">
+        <div className="bg-gradient-to-br from-primary to-primary-dark rounded-xl p-5 text-white">
           <div className="flex items-center gap-2 mb-3">
             <Users className="w-4 h-4" />
             <h2 className="font-semibold">Invite resellers, earn GH₵25</h2>

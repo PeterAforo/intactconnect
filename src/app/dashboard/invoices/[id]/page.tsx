@@ -59,7 +59,7 @@ export default function InvoiceDetailPage() {
             <FileText className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-text font-mono">{inv.invoiceNumber}</h1>
+            <h1 className="text-[22px] font-bold text-text font-mono">{inv.invoiceNumber}</h1>
             <Badge className={`text-[13px] ${STATUS_COLORS[inv.status] || ""}`}>{inv.status}</Badge>
           </div>
         </div>
@@ -144,7 +144,7 @@ export default function InvoiceDetailPage() {
       {showConfirm && (
         <>
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowConfirm(false)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl z-50 p-6 w-[360px]">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-md z-50 p-6 w-[360px]">
             <h3 className="font-bold text-text mb-2">Delete Invoice?</h3>
             <p className="text-sm text-text-muted mb-4">This action cannot be undone. Delete invoice <strong>{inv.invoiceNumber}</strong>?</p>
             <div className="flex gap-2">

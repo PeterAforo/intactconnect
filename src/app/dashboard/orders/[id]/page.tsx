@@ -53,7 +53,7 @@ export default function OrderDetailPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-text font-mono">{order.orderNumber}</h1>
+          <h1 className="text-[22px] font-bold text-text font-mono">{order.orderNumber}</h1>
           <p className="text-[13px] text-text-muted">{new Date(order.createdAt).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
         </div>
         <Badge className={`text-sm px-3 py-1 ${sc.color} flex items-center gap-1`}>

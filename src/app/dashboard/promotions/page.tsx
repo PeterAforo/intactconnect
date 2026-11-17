@@ -122,7 +122,7 @@ export default function PromotionsPage() {
       {showForm && (
         <>
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowForm(false)} />
-          <div className="fixed inset-2 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[480px] bg-white rounded-2xl shadow-2xl z-50 overflow-y-auto">
+          <div className="fixed inset-2 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[480px] bg-white rounded-xl shadow-md z-50 overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-border p-4 flex items-center justify-between z-10 rounded-t-2xl">
               <h2 className="font-bold text-text text-lg">{editId ? "Edit Promotion" : "New Promotion"}</h2>
               <button onClick={() => setShowForm(false)}><X className="w-5 h-5 text-text-muted" /></button>
@@ -170,7 +170,7 @@ export default function PromotionsPage() {
       {deleteId && (
         <>
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setDeleteId(null)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl z-50 p-6 w-[360px]">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-md z-50 p-6 w-[360px]">
             <h3 className="font-bold text-text mb-2">Delete Promotion?</h3>
             <p className="text-sm text-text-muted mb-4">This action cannot be undone.</p>
             <div className="flex gap-2">

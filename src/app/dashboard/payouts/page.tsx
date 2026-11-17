@@ -71,7 +71,7 @@ export default function PayoutsPage() {
       </div>
 
       {/* Balance Card */}
-      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-6 text-white mb-6">
+      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-xl p-6 text-white mb-6">
         <p className="text-sm text-white/70 mb-1">Available Balance</p>
         <p className="text-3xl font-bold">{loading ? "..." : formatPrice(balance)}</p>
       </div>
@@ -112,7 +112,7 @@ export default function PayoutsPage() {
       {showRequest && (
         <>
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowRequest(false)} />
-          <div className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[400px] bg-white rounded-2xl shadow-2xl z-50 p-6">
+          <div className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[400px] bg-white rounded-xl shadow-md z-50 p-6">
             <h2 className="font-bold text-text text-lg mb-1">Request Payout</h2>
             <p className="text-text-muted text-sm mb-4">Available: {formatPrice(balance)}</p>
             {error && <div className="bg-red-50 text-red-600 rounded-lg px-3 py-2 text-sm mb-3">{error}</div>}

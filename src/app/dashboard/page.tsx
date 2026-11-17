@@ -220,7 +220,7 @@ export default function DashboardPage() {
               {menuOpen && (
                 <>
                   <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
-                  <div role="menu" className="absolute right-0 top-10 z-40 w-52 bg-white rounded-xl border border-black/[0.07] shadow-lg py-1.5">
+                  <div role="menu" className="absolute right-0 top-10 z-40 w-52 bg-white rounded-xl border border-black/[0.07] shadow-sm py-1.5">
                     {[
                       { label: "View public store", href: `https://www.intactconnect.com.gh/store/${me.reseller.storeSlug}`, external: true },
                       { label: "Store branding", href: "/dashboard/onboarding" },
@@ -278,7 +278,7 @@ export default function DashboardPage() {
         <div className="min-w-0 space-y-4">
 
           {/* Featured summary — dark panel */}
-          <div className="rounded-2xl bg-[#0d0b09] text-white p-5 sm:p-6 relative overflow-hidden">
+          <div className="rounded-xl bg-[#0d0b09] text-white p-5 sm:p-6 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(50%_60%_at_85%_20%,rgba(255,255,255,0.07),transparent)] pointer-events-none" />
             <div className="relative flex items-start justify-between gap-4">
               <div>

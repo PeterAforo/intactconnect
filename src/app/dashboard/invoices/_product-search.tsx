@@ -51,7 +51,7 @@ export default function ProductSearch({ onSelect }: { onSelect: (p: ProductResul
           placeholder="Search products to add..." className="pl-8 text-sm" />
       </div>
       {open && q.trim() && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border rounded-lg shadow-sm z-20 max-h-56 overflow-y-auto">
           {loading ? (
             <div className="p-3 text-center"><Loader2 className="w-4 h-4 animate-spin mx-auto text-text-muted" /></div>
           ) : results.length === 0 ? (

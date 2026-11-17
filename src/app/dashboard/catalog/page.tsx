@@ -165,7 +165,7 @@ export default function CatalogPage() {
       {/* Share sheet */}
       {shareProduct && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4" onClick={() => setShareProduct(null)}>
-          <div className="bg-white rounded-2xl w-full max-w-md p-5" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-xl w-full max-w-md p-5" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-14 h-14 rounded-xl bg-surface overflow-hidden relative shrink-0">
                 {shareProduct.image ? <Image src={shareProduct.image} alt="" fill className="object-cover" /> : <Package className="w-6 h-6 text-border absolute inset-0 m-auto" />}

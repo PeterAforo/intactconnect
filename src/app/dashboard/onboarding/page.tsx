@@ -70,17 +70,17 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
+      <div className="flex items-center justify-center py-16">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface py-8 px-4">
+    <div className="px-5 sm:px-7 py-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8 text-center">
-          <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
             <Store className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-[22px] font-bold tracking-tight text-text">Customize Your Store</h1>
@@ -101,7 +101,7 @@ export default function OnboardingPage() {
 
         {step === 0 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="bg-white rounded-2xl border border-border p-6">
+            <div className="bg-white rounded-xl border border-border p-6">
               <h2 className="text-lg font-semibold text-text mb-1 flex items-center gap-2"><Tag className="w-5 h-5" /> Select Categories</h2>
               <p className="text-text-muted text-sm mb-6">Pick categories that match what you want to sell. Leave empty to show all products.</p>
               <div className="space-y-4">
@@ -140,7 +140,7 @@ export default function OnboardingPage() {
 
         {step === 1 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="bg-white rounded-2xl border border-border p-6">
+            <div className="bg-white rounded-xl border border-border p-6">
               <h2 className="text-lg font-semibold text-text mb-1 flex items-center gap-2"><Package className="w-5 h-5" /> Select Products</h2>
               <p className="text-text-muted text-sm mb-4">Choose specific products to feature. Leave empty to show all products from selected categories.</p>
               <Input
@@ -171,7 +171,7 @@ export default function OnboardingPage() {
 
         {step === 2 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="bg-white rounded-2xl border border-border p-6">
+            <div className="bg-white rounded-xl border border-border p-6">
               <h2 className="text-lg font-semibold text-text mb-1 flex items-center gap-2"><Palette className="w-5 h-5" /> Brand Your Store</h2>
               <p className="text-text-muted text-sm mb-6">Optional — you can change these later in Settings.</p>
               <div className="space-y-5">
@@ -216,7 +216,7 @@ export default function OnboardingPage() {
 
         {step === 3 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="bg-white rounded-2xl border border-border p-6 text-center">
+            <div className="bg-white rounded-xl border border-border p-6 text-center">
               <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Check className="w-8 h-8 text-success" />
               </div>

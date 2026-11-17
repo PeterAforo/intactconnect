@@ -26,7 +26,7 @@ export default function ClientDetail({ client: c, onClose }: { client: Client; o
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
-      <div className="fixed right-0 top-0 h-full w-full max-w-lg bg-white z-50 shadow-2xl overflow-y-auto">
+      <div className="fixed right-0 top-0 h-full w-full max-w-lg bg-white z-50 shadow-md overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-border p-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${c.clientType === "company" ? "bg-blue-100 text-blue-700" : "bg-primary/10 text-primary"}`}>
