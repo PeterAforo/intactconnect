@@ -8,12 +8,15 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, ShoppingCart, Users, FileText, Wallet,
   Settings, LogOut, Menu, X, Megaphone, Package, Share2, LifeBuoy,
+  Target, Send,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/catalog", label: "Catalog", icon: Package },
   { href: "/dashboard/share", label: "Share & Earn", icon: Share2 },
+  { href: "/dashboard/prospects", label: "Prospects", icon: Target },
+  { href: "/dashboard/campaigns", label: "Campaigns", icon: Send },
   { href: "/dashboard/orders", label: "Orders", icon: ShoppingCart },
   { href: "/dashboard/clients", label: "Clients", icon: Users },
   { href: "/dashboard/invoices", label: "Invoices", icon: FileText },
