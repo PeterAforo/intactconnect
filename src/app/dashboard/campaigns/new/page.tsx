@@ -224,7 +224,7 @@ function CampaignBuilder() {
           <div className="bg-white rounded-xl border border-black/[0.05] p-5">
             <label className="text-[12px] font-medium text-[#6b665e] block mb-1.5">Schedule (optional)</label>
             <input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} className="w-full h-10 px-3 rounded-lg border border-[#e2e0da] text-[13px]" />
-            <p className="text-[11px] text-[#a8a29a] mt-1.5">Leave empty to send immediately.</p>
+            <p className="text-[11px] text-[#a8a29a] mt-1.5">Leave empty to send immediately. Scheduled campaigns send automatically via hourly cron.</p>
           </div>
           <div className="flex flex-col gap-2">
             <button onClick={() => submit(true)} disabled={saving || !body.trim()} className="h-11 rounded-xl bg-[#0d0b09] text-white text-[13px] font-semibold inline-flex items-center justify-center gap-2 hover:bg-[#2a251d] disabled:opacity-50">
