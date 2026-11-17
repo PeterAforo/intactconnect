@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
   const d7 = new Date(now.getTime() - 7 * 86400000);
   const d30 = new Date(now.getTime() - 30 * 86400000);
 
-  const [views7, views30, productViews30, topProductEvents, orders30] = await Promise.all([
+  const d90 = new Date(now.getTime() - 90 * 86400000);
+  const [views7, views30, productViews30, topProductEvents, orders30, orderRows] = await Promise.all([
     prisma.storeEvent.count({ where: { resellerId: reseller!.id, type: "store_view", createdAt: { gte: d7 } } }),
     prisma.storeEvent.count({ where: { resellerId: reseller!.id, type: "store_view", createdAt: { gte: d30 } } }),
     prisma.storeEvent.count({ where: { resellerId: reseller!.id, type: "product_view", createdAt: { gte: d30 } } }),
@@ -22,6 +23,10 @@ export async function GET(request: NextRequest) {
       take: 5,
     }),
     prisma.resellerOrder.count({ where: { resellerId: reseller!.id, createdAt: { gte: d30 } } }),
+    prisma.resellerOrder.findMany({
+      where: { resellerId: reseller!.id, createdAt: { gte: d90 } },
+      select: { total: true, commission: true, createdAt: true },
+    }),
   ]);
 
   const productIds = topProductEvents.map((e) => e.productId).filter(Boolean) as string[];
@@ -46,6 +51,18 @@ export async function GET(request: NextRequest) {
   const totalViews = views30;
   const conversion = totalViews > 0 ? Math.round((orders30 / totalViews) * 1000) / 10 : 0;
 
+  // Daily sales + commission buckets for the 90-day trend chart
+  const salesDaily = Array.from({ length: 90 }, (_, i) => {
+    const day = new Date(now.getTime() - (89 - i) * 86400000).toDateString();
+    const rows = orderRows.filter((o) => o.createdAt.toDateString() === day);
+    return {
+      date: day,
+      sales: Math.round(rows.reduce((s, o) => s + o.total, 0) * 100) / 100,
+      commission: Math.round(rows.reduce((s, o) => s + o.commission, 0) * 100) / 100,
+      orders: rows.length,
+    };
+  });
+
   return NextResponse.json({
     views7,
     views30,
@@ -53,6 +70,7 @@ export async function GET(request: NextRequest) {
     orders30,
     conversion,
     daily,
+    salesDaily,
     topProducts: topProductEvents.map((e) => ({
       productId: e.productId,
       views: e._count.productId,

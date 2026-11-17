@@ -7,10 +7,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, ShoppingCart, Users, FileText, Wallet,
-  Store, Settings, LogOut, Menu, X, ChevronRight, Tag, Megaphone,
-  Package, Share2,
+  Settings, LogOut, Menu, X, Megaphone, Package, Share2, LifeBuoy,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -21,12 +19,90 @@ const NAV_ITEMS = [
   { href: "/dashboard/invoices", label: "Invoices", icon: FileText },
   { href: "/dashboard/payouts", label: "Payouts", icon: Wallet },
   { href: "/dashboard/promotions", label: "Promotions", icon: Megaphone },
+];
+
+const BOTTOM_ITEMS = [
+  { href: "https://wa.me/233000000000", label: "Support", icon: LifeBuoy, external: true },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 interface ResellerData {
   user: { id: string; name: string; email: string };
   reseller: { id: string; storeName: string; storeSlug: string; status: string; picture: string; commissionBalance: number } | null;
+}
+
+function SidebarContent({ data, pathname, onNavigate, onLogout }: {
+  data: ResellerData;
+  pathname: string;
+  onNavigate?: () => void;
+  onLogout: () => void;
+}) {
+  const initials = (data.reseller?.storeName || data.user.name || "?").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+  return (
+    <div className="flex flex-col h-full">
+      {/* Wordmark */}
+      <div className="px-4 pt-5 pb-4">
+        <Link href="/dashboard" onClick={onNavigate}>
+          <Image src="/img/logo.png" alt="IntactConnect" width={140} height={40} className="h-9 w-auto" />
+        </Link>
+      </div>
+
+      {/* Identity */}
+      <div className="flex flex-col items-center px-3 pb-4">
+        {data.reseller?.picture ? (
+          <img src={data.reseller.picture} alt="" className="w-12 h-12 rounded-full object-cover ring-2 ring-black/[0.06]" />
+        ) : (
+          <div className="w-12 h-12 rounded-full bg-[#0d0b09] text-white flex items-center justify-center text-sm font-bold">{initials}</div>
+        )}
+        <p className="mt-2.5 text-[13px] font-semibold text-[#1c1917] text-center truncate w-full">{data.reseller?.storeName || data.user.name}</p>
+        <p className="text-[11px] text-[#8a857c]">Reseller</p>
+      </div>
+
+      <div className="mx-4 border-t border-black/[0.06]" />
+
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5">
+        {NAV_ITEMS.map((item) => {
+          const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition-colors ${active ? "bg-white text-[#1c1917] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.05)]" : "text-[#8a857c] hover:text-[#1c1917] hover:bg-black/[0.03]"}`}
+            >
+              <item.icon className="w-4 h-4 shrink-0" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Lower group */}
+      <div className="px-2.5 pb-2 space-y-0.5">
+        <div className="mx-1.5 border-t border-black/[0.06] mb-2" />
+        {BOTTOM_ITEMS.map((item) => (
+          <Link
+            key={item.label}
+            href={item.href}
+            target={item.external ? "_blank" : undefined}
+            onClick={onNavigate}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] text-[#8a857c] hover:text-[#1c1917] hover:bg-black/[0.03] transition-colors"
+          >
+            <item.icon className="w-4 h-4 shrink-0" />
+            {item.label}
+          </Link>
+        ))}
+        <button
+          onClick={onLogout}
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] text-[#b42318] hover:bg-red-50 transition-colors w-full text-left"
+        >
+          <LogOut className="w-4 h-4 shrink-0" />
+          Sign out
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -55,88 +131,47 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#efede8]">
+        <div className="w-8 h-8 border-4 border-[#0d0b09] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface">
-      {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 w-full z-50 bg-white border-b border-border h-14 flex items-center justify-between px-4">
-        <button onClick={() => setSidebarOpen(true)}>
-          <Menu className="w-5 h-5 text-text" />
-        </button>
-        <Image src="/img/logo.png" alt="IntactConnect" width={160} height={45} className="h-10 w-auto" />
-        <div className="w-5" />
-      </header>
-
-      {/* Sidebar Overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
-      )}
-
-      {/* Sidebar */}
-      <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-border transform transition-transform lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="h-14 flex items-center justify-between px-4 border-b border-border">
-          <Link href="/dashboard"><Image src="/img/logo.png" alt="IntactConnect" width={180} height={50} className="h-12 w-auto" /></Link>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
-            <X className="w-5 h-5 text-text-muted" />
+    <div className="min-h-screen bg-[#efede8] p-1.5 sm:p-2.5">
+      <div className="flex h-[calc(100vh-0.75rem)] sm:h-[calc(100vh-1.25rem)] rounded-2xl overflow-hidden bg-white shadow-[0_10px_40px_-12px_rgba(13,11,9,0.15)]">
+        {/* Mobile header */}
+        <header className="lg:hidden fixed top-0 inset-x-0 z-50 bg-white border-b border-black/[0.06] h-14 flex items-center justify-between px-4">
+          <button onClick={() => setSidebarOpen(true)} aria-label="Open menu">
+            <Menu className="w-5 h-5 text-[#1c1917]" />
           </button>
-        </div>
+          <Image src="/img/logo.png" alt="IntactConnect" width={150} height={42} className="h-9 w-auto" />
+          <div className="w-5" />
+        </header>
 
-        {/* Reseller Info */}
-        {data?.reseller && (
-          <div className="p-4 border-b border-border">
-            <div className="flex items-center gap-3">
-              <img src={data.reseller.picture} alt="" className="w-10 h-10 rounded-full object-cover" />
-              <div className="min-w-0">
-                <p className="font-medium text-text text-sm truncate">{data.reseller.storeName}</p>
-                <p className="text-xs text-text-muted truncate">{data.user.email}</p>
-              </div>
-            </div>
-          </div>
+        {/* Mobile sidebar */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setSidebarOpen(false)} />
         )}
-
-        {/* Nav */}
-        <nav className="p-2 flex-1">
-          {NAV_ITEMS.map((item) => {
-            const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-0.5 ${active ? "bg-primary/10 text-primary" : "text-text-muted hover:bg-surface hover:text-text"}`}
-              >
-                <item.icon className="w-4.5 h-4.5" />
-                {item.label}
-                {active && <ChevronRight className="w-4 h-4 ml-auto" />}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Store Link + Logout */}
-        <div className="p-3 border-t border-border space-y-2">
-          {data?.reseller && (
-            <Link href={`https://www.intactconnect.com.gh/store/${data.reseller.storeSlug}`} target="_blank" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-primary/5 text-primary hover:bg-primary/10 transition-colors">
-              <Store className="w-4 h-4" /> View My Store
-            </Link>
-          )}
-          <button onClick={handleLogout} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-danger hover:bg-danger/5 transition-colors w-full">
-            <LogOut className="w-4 h-4" /> Log Out
+        <aside className={`fixed top-0 left-0 z-50 h-full w-[240px] bg-[#faf9f6] border-r border-black/[0.06] transform transition-transform lg:hidden ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4" aria-label="Close menu">
+            <X className="w-5 h-5 text-[#8a857c]" />
           </button>
-        </div>
-      </aside>
+          <SidebarContent data={data!} pathname={pathname} onNavigate={() => setSidebarOpen(false)} onLogout={handleLogout} />
+        </aside>
 
-      {/* Main Content */}
-      <main className="lg:ml-64 pt-14 lg:pt-0 min-h-screen">
-        <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
-          {children}
-        </motion.div>
-      </main>
+        {/* Desktop sidebar */}
+        <aside className="hidden lg:flex w-[168px] xl:w-[184px] shrink-0 bg-[#faf9f6] border-r border-black/[0.06] flex-col">
+          <SidebarContent data={data!} pathname={pathname} onLogout={handleLogout} />
+        </aside>
+
+        {/* Workspace */}
+        <main className="flex-1 min-w-0 overflow-y-auto pt-14 lg:pt-0">
+          <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            {children}
+          </motion.div>
+        </main>
+      </div>
     </div>
   );
 }
