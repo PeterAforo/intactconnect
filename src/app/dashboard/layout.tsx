@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, ShoppingCart, Users, FileText, Wallet,
   Settings, LogOut, Menu, X, Megaphone, Package, Share2, LifeBuoy,
-  Target, Send,
+  Target, Send, Store, Check, ChevronDown,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -114,6 +114,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [data, setData] = useState<ResellerData | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const sectionLabel = NAV_ITEMS.find((i) => i.href !== "/dashboard" && pathname.startsWith(i.href))?.label || "Overview";
+
+  const copyStoreLink = async () => {
+    const url = data?.reseller ? `https://www.intactconnect.com.gh/store/${data.reseller.storeSlug}` : window.location.origin;
+    try { await navigator.clipboard.writeText(url); } catch { /* clipboard unavailable */ }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     fetch("/api/auth/me").then((r) => r.json()).then((d) => {
@@ -170,6 +181,79 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Workspace */}
         <main className="flex-1 min-w-0 overflow-y-auto pt-14 lg:pt-0">
+          {/* Top navbar — every section except Overview (which has its own greeting header) */}
+          {pathname !== "/dashboard" && (
+            <div className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-black/[0.05] px-5 sm:px-7 h-14 flex items-center justify-between gap-4">
+              <h1 className="text-[15px] font-semibold text-[#1c1917] tracking-tight truncate">{sectionLabel}</h1>
+              <div className="flex items-center gap-2">
+                {data!.reseller && (
+                  <div className="relative hidden sm:block">
+                    <button
+                      onClick={() => setMenuOpen((v) => !v)}
+                      aria-haspopup="menu"
+                      aria-expanded={menuOpen}
+                      className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[#f0efec] hover:bg-[#e6e4df] text-[13px] font-medium text-[#3a362f] transition-colors"
+                    >
+                      <Store className="w-3.5 h-3.5" />
+                      {data!.reseller!.storeName}
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {menuOpen && (
+                      <>
+                        <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
+                        <div role="menu" className="absolute right-0 top-10 z-40 w-52 bg-white rounded-xl border border-black/[0.07] shadow-sm py-1.5">
+                          {[
+                            { label: "View public store", href: `https://www.intactconnect.com.gh/store/${data!.reseller!.storeSlug}`, external: true },
+                            { label: "Store branding", href: "/dashboard/onboarding" },
+                            { label: "Store settings", href: "/dashboard/settings" },
+                          ].map((item) => (
+                            <Link
+                              key={item.label}
+                              href={item.href}
+                              target={item.external ? "_blank" : undefined}
+                              onClick={() => setMenuOpen(false)}
+                              className="block px-4 py-2 text-[13px] text-[#3a362f] hover:bg-[#f5f4f1] transition-colors"
+                            >
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+                {([
+                  { icon: Store, onClick: () => window.open(data!.reseller ? `https://www.intactconnect.com.gh/store/${data!.reseller.storeSlug}` : "/dashboard", "_blank"), label: "View store" },
+                  { icon: copied ? Check : Share2, onClick: copyStoreLink, label: copied ? "Link copied" : "Copy store link" },
+                  { icon: Package, href: "/dashboard/catalog", label: "Catalog", external: false },
+                  { icon: LifeBuoy, href: "https://wa.me/233543645126", label: "Support", external: true },
+                ] as { icon: React.ComponentType<{ className?: string }>; href?: string; onClick?: () => void; label: string; external?: boolean }[]).map((b) =>
+                  b.href ? (
+                    <Link
+                      key={b.label}
+                      href={b.href}
+                      target={b.external ? "_blank" : undefined}
+                      aria-label={b.label}
+                      title={b.label}
+                      className="w-9 h-9 rounded-full bg-[#f5f4f1] hover:bg-[#eceae5] text-[#4a463f] flex items-center justify-center transition-colors"
+                    >
+                      <b.icon className="w-4 h-4" />
+                    </Link>
+                  ) : (
+                    <button
+                      key={b.label}
+                      onClick={b.onClick}
+                      aria-label={b.label}
+                      title={b.label}
+                      className="w-9 h-9 rounded-full bg-[#f5f4f1] hover:bg-[#eceae5] text-[#4a463f] flex items-center justify-center transition-colors"
+                    >
+                      <b.icon className="w-4 h-4" />
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+          )}
           <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             {children}
           </motion.div>
