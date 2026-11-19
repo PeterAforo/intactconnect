@@ -64,6 +64,42 @@ export async function GET(
     image: p.images[0]?.url || null,
   }));
 
+  // Frequently bought together: products that appear alongside this one in
+  // this reseller's own orders, ranked by co-occurrence.
+  const coRows = await prisma.resellerOrderItem.groupBy({
+    by: ["productId"],
+    where: {
+      productId: { not: product.id },
+      order: { resellerId: reseller.id, items: { some: { productId: product.id } } },
+    },
+    _count: { productId: true },
+    orderBy: { _count: { productId: "desc" } },
+    take: 4,
+  });
+
+  let frequentlyBought: unknown[] = [];
+  if (coRows.length) {
+    const fbProducts = await prisma.product.findMany({
+      where: { id: { in: coRows.map((r) => r.productId) }, status: "active", stock: { gt: 0 } },
+      select: {
+        id: true, name: true, slug: true, price: true, comparePrice: true, rating: true, reviewCount: true,
+        categoryId: true,
+        images: { take: 1, orderBy: { order: "asc" }, select: { url: true } },
+        category: { select: { id: true, name: true, slug: true } },
+      },
+    });
+    const margins = await prisma.categoryMargin.findMany({
+      where: { categoryId: { in: fbProducts.map((p) => p.categoryId) } },
+      select: { categoryId: true, marginPercent: true },
+    });
+    const marginMap = new Map(margins.map((m) => [m.categoryId, m.marginPercent]));
+    frequentlyBought = fbProducts.map((p) => ({
+      ...p,
+      resellerPrice: Math.ceil(p.price * (1 + (marginMap.get(p.categoryId) || 0) / 100)),
+      image: p.images[0]?.url || null,
+    }));
+  }
+
   return NextResponse.json({
     ...product,
     reseller,
@@ -71,5 +107,6 @@ export async function GET(
     originalPrice: product.price,
     image: product.images[0]?.url || null,
     related: relatedWithMargin,
+    frequentlyBought,
   });
 }
